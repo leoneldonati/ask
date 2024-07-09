@@ -14,25 +14,26 @@ if (Astro.request.method === "POST") {
     });
 
     if (res.ok) {
-      const sessionString = res.headers.get("cookie")?.split("=");
 
-      Astro.cookies.set("session", sessionString![1]);
+      console.log(Astro.cookies.get('Cookies'))
+      //   const sessionString = res.headers.get("cookie")?.split("=");
 
-      const data = await res.json();
+      //   Astro.cookies.set("session", sessionString![1]);
 
-      authStore.set({ isAuth: true, userLogged: data, errors: null });
+      //   const data = await res.json();
 
-      return Astro.redirect("/");
+      //   authStore.set({ isAuth: true, userLogged: data, errors: null });
+
+      //   return Astro.redirect("/");
+      // }
+      // const error = await res.json();
     }
-    const error = await res.json();
-    authStore.set({ isAuth: false, userLogged: null, errors: error });
   } catch (e) {
     console.log(e);
   }
 }
 
 const { errors } = authStore.get();
-
 ---
 
 <Layout page="Login" description="">
