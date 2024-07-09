@@ -1,11 +1,11 @@
 ---
-import Layout from "@layout";
-import { authStore } from "@stores/auth";
-import PostCard from "@components/post-card.astro";
+import Layout from "../layouts/Layout.astro";
+import { authStore } from "../stores/auth";
+import PostCard from "../components/post-card.astro";
 import IconSearch from "@icons/search.astro";
 import IconUser from "@icons/user.astro";
 import BubblePlus from "@icons/bubble-plus.astro";
-import { getPosts } from "@services/api";
+import { getPosts } from "../services/api";
 import IconLeft from "@icons/toggle-left.astro";
 
 if (!authStore.get().isAuth) return Astro.redirect("/login");

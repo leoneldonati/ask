@@ -1,0 +1,145 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { authStore } from "../../stores/auth";
+import PostCardProfile from "../../components/post-card-profile.astro";
+import IconPoint from "@icons/point.astro";
+import IconCalendarClock from "@icons/calendar-clock.astro";
+import IconCake from "@icons/cake.astro";
+import IconMapPin from "@icons/map-pin.astro";
+import LeftArrow from "@icons/left-arrow.astro";
+import defaultAvatar from "../../assets/default-avatar.svg";
+import { getUserPosts } from "../../services/api";
+const userLogged = authStore.get().userLogged!;
+
+const avatar =
+  (JSON.parse(userLogged.avatar)[1]?.secureUrl as string) ?? defaultAvatar.src;
+const createdAt = new Date(userLogged.createdAt).toLocaleDateString("es");
+const userBd = new Date(userLogged.DATE).toLocaleDateString("es");
+const location = JSON.parse(userLogged.location);
+
+const headers = new Headers();
+headers.append("Cookie", `session=${Astro.cookies.get("session")?.value}`);
+
+const posts = await getUserPosts(userLogged.id).catch(e => console.log(e));
+---
+
+<Layout page={`@${userLogged.username}`} description={userLogged.bio}>
+  <section class="profile">
+    <a href="/" class="profile__btn--back" title="Go home.">
+      <LeftArrow />
+    </a>
+    
+    <div class="profile__container">
+      <img
+        class="profile__img"
+        src={avatar}
+        alt={`${userLogged.name} avatar.`}
+        loading="lazy"
+        transition:name="avatar"
+        title={userLogged.name}
+      />
+
+      <div>
+        <h1 class="profile__h1">
+          {userLogged.name}
+          <IconPoint />
+          <span class="profile__h1__span">@{userLogged.username}</span>
+        </h1>
+
+        <p class="profile_p">
+          {userLogged.bio}
+        </p>
+        <ul class="profile__ul">
+          <li>
+            <IconCalendarClock /> Joined at: {createdAt}
+          </li>
+          <li>
+            <IconCake /> Birthday: {userBd}
+          </li>
+          <li>
+            <IconMapPin />
+          </li>
+        </ul>
+      </div>
+    </div>
+    <a class="profile__btn--edit" href={`/profile/${userLogged.id}`}>
+      Edit profile
+    </a>
+
+    <hr style="margin-bottom: 16px;" />
+    <div class="profile__container--posts">
+      {
+        posts?.length !== 0 &&
+          posts.map((post) => <PostCardProfile post={post} />)
+      }
+    </div>
+  </section>
+</Layout>
+<style>
+  .profile {
+    min-height: 100dvh;
+    max-width: var(--max_w);
+    margin: 0 auto;
+    padding: 6px;
+    display: flex;
+    flex-flow: column;
+  }
+  .profile__btn--back {
+    position: fixed;
+    z-index: 2;
+    color: var(--color_accent);
+    display: flex;
+    border: 3px solid var(--color_accent);
+    border-radius: 100%;
+    padding: 10px;
+    cursor: pointer;
+    backdrop-filter: blur(20px);
+  }
+  .profile__btn--edit {
+    display: flex;
+    max-width: fit-content;
+    border-radius: var(--border_size);
+    padding: var(--padding_boxes);
+    background-color: var(--color_accent);
+    color: #fff;
+    box-shadow: 0 0 4px var(--color_accent_light);
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(0.98);
+    }
+  }
+  .profile__img {
+    position: sticky;
+    top: 0;
+    display: flex;
+    aspect-ratio: 4 / 4;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 100%;
+    width: 100%;
+    max-width: 400px;
+    transition: transform 0.2s ease;
+  }
+  .profile__container {
+    display: flex;
+    flex-flow: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .profile__container--posts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    flex: 1;
+  }
+
+  .profile__h1 {
+    display: flex;
+  }
+  .profile__h1__span {
+    color: var(--color_secondary_text);
+  }
+  .profile__ul {
+    color: var(--color_secondary_text);
+  }
+</style>

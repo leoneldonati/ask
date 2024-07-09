@@ -1,0 +1,132 @@
+---
+import Layout from "src/layouts/Layout.astro";
+import ImageSelector from "@components/post-image-selector.astro";
+import { authStore } from "@stores/auth";
+
+const { userLogged } = authStore.get();
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData().catch(e => console.log(e)) as FormData;
+  form.append("userId", userLogged?.id);
+  return fetch("http://localhost:4321/api/add-post", {
+    method: "POST",
+    body: form,
+  })
+    .then((res) => {
+      return Astro.redirect("/");
+    })
+    .catch((err) => console.error(err));
+}
+
+const avatar = JSON.parse(userLogged.avatar)[0]?.secureUrl
+---
+
+<Layout
+  page=`Share everithing ${userLogged.name}!`
+  description="Add post on Ask! Fast, secure and private!"
+>
+  <section class="add-post__section">
+    <div
+      class="add-post__wrapper--top"
+    >
+
+    <a href="/" title="Go back!">
+      <h1 transition:name="ask">Ask!</h1>
+    </a>
+
+      <img
+        src={avatar}
+        alt=""
+        loading="lazy"
+        transition:name="avatar"
+        title={userLogged.name}
+      />
+    </div>
+    
+    <form
+    class="add-post__form"
+    method="post"
+    enctype="multipart/form-data"
+    id="form"
+    >
+    <p class="add-post__p">How your feels today?</p>
+      <textarea
+        name="content"
+        id="content"
+        class="add-post__textarea"
+        placeholder="Share how you feel..."
+        autofocus></textarea>
+
+      <ImageSelector />
+
+      <button class="add-post__btn" type="submit" form="form"> Post </button>
+    </form>
+  </section>
+</Layout>
+
+<style>
+  .add-post__section {
+    position: relative;
+    max-width: calc(var(--max_w) - 200px);
+    min-height: 100dvh;
+    margin: 0 auto;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    border-left: 1px solid var(--color_secondary);
+    border-right: 1px solid var(--color_secondary);
+    padding:5em var(--padding_boxes);
+
+    
+  }
+  .add-post__p {
+    font-size: xx-large;
+  }
+  .add-post__textarea {
+    width: 100%;
+    min-height: 200px;
+    resize: none;
+    border: 1px solid var(--color_secondary);
+    padding: var(--padding_boxes);
+  }
+
+  .add-post__form {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .add-post__btn {
+    padding: 10px 20px;
+    background-color: var(--color_accent_light);
+    border: 3px solid var(--color_accent);
+    border-radius: var(--border_size);
+    cursor: pointer;
+    transition: box-shadow 0.2s ease-in-out;
+
+    &:hover {
+      box-shadow: 0 8px 4px var(--color_accent_light);
+    }
+    &:active {
+      box-shadow: 0 4px 4px var(--color_accent_light);
+    }
+  }
+
+  .add-post__wrapper--top {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    &  h1 {
+      color: var(--color_accent);
+      font-size: xx-large;
+    }
+
+    & > img {
+      aspect-ratio: 4 / 4;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 100%;
+    }
+  }
+</style>

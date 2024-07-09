@@ -1,7 +1,13 @@
-import jwt from "jsonwebtoken";
+import { SignJWT } from "jose";
 
-function signToken(payload: any) {
-  return jwt.sign(JSON.stringify(payload), import.meta.env.SECRET_JWT);
+const alg = 'RS256'
+async function signToken() {
+  try {
+   return await new SignJWT().setProtectedHeader({ alg }).setExpirationTime('1h').sign(import.meta.env.SECRET_JWT)
+  }
+  catch (e) {
+
+  }
 }
 
 export { signToken }

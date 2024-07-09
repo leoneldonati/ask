@@ -1,0 +1,196 @@
+---
+import { authStore } from "src/stores/auth";
+import AvatarSelector from "../components/avatar-selector.astro";
+import Layout from "../layouts/Layout.astro";
+import ErrorCard from "@components/error-card.astro";
+
+if (Astro.request.method === 'POST') {
+  try {
+    const form = await Astro.request.formData()
+    
+    const res = await fetch('http://localhost:4321/api/sign', {
+      method: 'POST',
+      body: form
+    })
+
+    if (res.ok) {
+      return Astro.redirect('/login')
+    }
+
+    authStore.set({ isAuth: false, errors: await res.json() })
+  }
+  catch (e) {
+    authStore.set({ isAuth: false, errors: e })
+  }
+
+}
+
+const { errors } = authStore.get()
+
+console.log(errors)
+---
+
+<Layout description="" page="Sign in">
+  <section class="sign">
+    <h1 class="sign__h1">
+      Join to <span transition:name="ask">Ask!</span>
+    </h1>
+
+    <h2 class="sign__h2">Ask, debate and share everything you feel!</h2>
+
+    <form
+      class="sign__form"
+      method="POST"
+      enctype="multipart/form-data"
+      transition:name="form"
+    >
+      <AvatarSelector />
+
+      <div class="sign__container--names">
+        <label for="name" class="sign__label">
+          <span> Name </span>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="John"
+            class="sign__input"
+            autofocus
+          />
+        </label>
+
+        <label for="lastname" class="sign__label">
+          <span> Lastname </span>
+          <input
+            type="text"
+            id="lastname"
+            name="lastname"
+            placeholder="Oxford"
+            class="sign__input"
+          />
+        </label>
+      </div>
+
+      <label for="username" class="sign__label">
+        <span> Pic a username </span>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="johnoxford"
+          class="sign__input"
+        />
+      </label>
+
+      <label for="email" class="sign__label" transition:name="email">
+        <span> Email </span>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          placeholder="johnoxford@mydomain.com"
+          class="sign__input"
+        />
+      </label>
+
+      <label for="password" class="sign__label" transition:name="password">
+        <span> Take a password </span>
+        <input
+          type="text"
+          name="password"
+          id="password"
+          placeholder="********"
+          class="sign__input"
+        />
+      </label>
+
+      <label for="bio" class="sign__label">
+        <span> Write some about you </span>
+        <textarea
+          name="bio"
+          id="bio"
+          placeholder="This is my bio."
+          class="sign__input--bio"></textarea>
+      </label>
+
+      <label for="date" class="sign__label">
+        <span> Your date </span>
+        <input type="date" name="date" id="date" class="sign__input" />
+      </label>
+
+      <button type="submit" class="sign__button"> sign up </button>
+    </form>
+
+    {errors && <ErrorCard error={errors}/>}
+  </section>
+</Layout>
+<style>
+  .sign {
+    min-height: 100dvh;
+
+    display: grid;
+    place-content: center;
+    padding: 0 2px;
+  }
+  .sign__h1 {
+    font-size: xx-large;
+
+    & > span {
+      color: var(--color_accent);
+    }
+  }
+  .sign__h2 {
+  }
+  .sign__form {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    gap: 1em;
+    width: 100%;
+    max-width: 400px;
+    margin: 15px auto 0 auto;
+    border: 1px solid var(--color_secondary);
+    border-radius: var(--border_size);
+    padding: var(--padding_boxes);
+  }
+  .sign__container--names {
+    width: 100%;
+    display: flex;
+    flex-flow: row;
+    gap: 0.5em;
+  }
+
+  .sign__label {
+    width: 100%;
+  }
+  .sign__input {
+    width: 100%;
+    padding: var(--padding_boxes);
+  }
+  .sign__input--bio {
+    resize: none;
+    width: 100%;
+    padding: var(--padding_boxes);
+  }
+  .sign__button {
+    font-size: 1.1em;
+    padding: 0.6em 1em;
+    background-color: var(--color_accent);
+    border: none;
+    border-radius: var(--border_size);
+    box-shadow: 0 6px 6px var(--color_accent_light);
+    cursor: pointer;
+    transition:
+      transform 0.2s cubic-bezier(0.075, 0.82, 0.165, 1),
+      box-shadow 0.3s ease;
+
+    &:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 9px var(--color_accent_light);
+    }
+    &:active {
+      transform: scale(0.99);
+      box-shadow: 0 4px 6px var(--color_accent_light);
+    }
+  }
+</style>

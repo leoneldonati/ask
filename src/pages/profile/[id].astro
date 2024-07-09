@@ -1,0 +1,157 @@
+---
+import AvatarSelector from "@components/avatar-selector.astro";
+import Layout from "../../layouts/Layout.astro";
+import { authStore } from "../../stores/auth";
+
+const id = Astro.params?.id;
+
+const userLogged = authStore.get().userLogged!;
+
+if (userLogged.id !== id) return Astro.redirect('/')
+
+
+
+const name = userLogged.name.split(" ")[0];
+const lastname = userLogged.name.split(" ")[1];
+---
+
+<Layout page="Edit your profile." description="">
+  <section class="edit">
+    <form class="edit__form" method="post" enctype="multipart/form-data">
+      <AvatarSelector />
+      <div class="edit__container--names">
+        <label for="name" class="edit__label">
+          <span> Name </span>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder={name}
+            class="edit__input"
+            autofocus
+          />
+        </label>
+
+        <label for="lastname" class="edit__label">
+          <span> Lastname </span>
+          <input
+            type="text"
+            id="lastname"
+            name="lastname"
+            placeholder={lastname}
+            class="edit__input"
+          />
+        </label>
+      </div>
+
+      <label for="username" class="edit__label">
+        <span> Pic a username </span>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder={userLogged.username}
+          class="edit__input"
+        />
+      </label>
+
+      <label for="email" class="edit__label">
+        <span> Email </span>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          placeholder={userLogged.email}
+          class="edit__input"
+        />
+      </label>
+
+      <label for="password" class="edit__label">
+        <span> Take a password </span>
+        <input
+          type="text"
+          name="password"
+          id="password"
+          placeholder="********"
+          class="edit__input"
+        />
+      </label>
+
+      <label for="bio" class="edit__label">
+        <span> Write some about you </span>
+        <textarea
+          name="bio"
+          id="bio"
+          placeholder={userLogged.bio}
+          class="edit__input--bio"></textarea>
+      </label>
+
+      <label for="date" class="edit__label">
+        <span> Your date </span>
+        <input type="date" name="date" id="date" class="edit__input" />
+      </label>
+
+      <button type="submit" class="edit__button">Save profile</button>
+    </form>
+  </section>
+</Layout>
+
+<style>
+  .edit {
+    min-height: 100dvh;
+    display: grid;
+    place-content: center;
+  }
+  .edit__form {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    gap: 1em;
+    width: 100%;
+    max-width: 400px;
+    margin: 15px auto 0 auto;
+    border: 1px solid var(--color_secondary);
+    border-radius: var(--border_size);
+    padding: var(--padding_boxes);
+  }
+  .edit__container--names {
+    width: 100%;
+    display: flex;
+    flex-flow: row;
+    gap: 0.5em;
+  }
+
+  .edit__label {
+    width: 100%;
+  }
+  .edit__input {
+    width: 100%;
+    padding: var(--padding_boxes);
+  }
+  .edit__input--bio {
+    resize: none;
+    width: 100%;
+    padding: var(--padding_boxes);
+  }
+  .edit__button {
+    font-size: 1.1em;
+    padding: 0.6em 1em;
+    background-color: var(--color_accent);
+    border: none;
+    border-radius: var(--border_size);
+    box-shadow: 0 6px 6px var(--color_accent_light);
+    cursor: pointer;
+    transition:
+      transform 0.2s cubic-bezier(0.075, 0.82, 0.165, 1),
+      box-shadow 0.3s ease;
+
+    &:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 9px var(--color_accent_light);
+    }
+    &:active {
+      transform: scale(0.99);
+      box-shadow: 0 4px 6px var(--color_accent_light);
+    }
+  }
+</style>

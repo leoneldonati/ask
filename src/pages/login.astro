@@ -1,0 +1,198 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { authStore } from "../stores/auth";
+import ErrorCard from "../components/error-card.astro";
+import BrandGoogle from "../icons/brand-google.astro";
+import BrandInstagram from "../icons/brand-instagram.astro";
+
+if (Astro.request.method === "POST") {
+  try {
+    const formData = await Astro.request.formData();
+    const res = await fetch(`http://localhost:4321/api/login`, {
+      method: "post",
+      body: formData,
+    });
+
+    if (res.ok) {
+      const sessionString = res.headers.get("cookie")?.split("=");
+
+      Astro.cookies.set("session", sessionString![1]);
+
+      const data = await res.json();
+
+      authStore.set({ isAuth: true, userLogged: data, errors: null });
+
+      return Astro.redirect("/");
+    }
+    const error = await res.json();
+    authStore.set({ isAuth: false, userLogged: null, errors: error });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+const { errors } = authStore.get();
+
+---
+
+<Layout page="Login" description="">
+  <section class="login">
+    <h1 class="login__h1">
+      Login into <span transition:name="ask">Ask!</span> and share.
+    </h1>
+
+    <h2 class="login__h2">
+      The web in a <span>nutshell.</span>
+    </h2>
+
+    <form method="post" class="login__form" transition:name="form">
+      <label for="email" class="login__label" transition:name="email">
+        <span> Email </span>
+        <input
+          class="login__input"
+          type="email"
+          autofocus
+          name="email"
+          id="email"
+          placeholder="example@example.com"
+        />
+      </label>
+
+      <label for="password" class="login__label" transition:name="password">
+        <span> Password </span>
+        <input
+          class="login__input"
+          type="password"
+          name="password"
+          id="password"
+          placeholder="*************"
+        />
+      </label>
+
+      <div class="login__oAuth">
+        <p>Or login with...</p>
+
+        <div class="login__oAuth__container">
+          <button title="Login with Google" class="disabled">
+            <BrandGoogle />
+          </button>
+          <button title="Login with Instagram" class="disabled">
+            <BrandInstagram />
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="login__button" title="Login into Ask!">
+        Login
+      </button>
+    </form>
+
+    <p style="margin-top: 4px;">
+      If you have'nt an account, you can create <a
+        href="/sign"
+        title="Go to sign page">here</a
+      >.
+    </p>
+
+    <!-- error card -->
+
+    {errors !== null ? <ErrorCard error={errors} /> : null}
+  </section>
+</Layout>
+
+<style>
+  .login {
+    min-height: 100dvh;
+    display: grid;
+    place-content: center;
+    padding: 0 2px;
+  }
+  .login__h1 {
+    font-size: xx-large;
+
+    & > span {
+      color: var(--color_accent);
+    }
+  }
+  .login__h2 {
+  }
+  .login__form {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    gap: 1em;
+    width: 100%;
+    max-width: 500px;
+    margin-top: 15px;
+    border: 1px solid var(--color_secondary);
+    border-radius: var(--border_size);
+    padding: var(--padding_boxes);
+  }
+  .login__label {
+    width: 100%;
+  }
+  .login__input {
+    width: 100%;
+    padding: var(--padding_boxes);
+  }
+  .login__oAuth {
+    width: 100%;
+    min-height: 90px;
+  }
+  .login__oAuth__container {
+    max-width: fit-content;
+    border: 1px solid var(--color_secondary);
+    border-radius: var(--border_size);
+    padding: var(--padding_boxes);
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    margin: 4px auto 0 auto;
+
+    & > button {
+      background: none;
+      border: none;
+      transition: transform 0.2s ease;
+
+      cursor: pointer;
+      &:hover {
+        transform: scale(1.02);
+      }
+      &:active {
+        transform: scale(0.99);
+      }
+
+      & > svg {
+        width: 30px;
+        color: var(--color_accent);
+      }
+    }
+  }
+  .login__button {
+    font-size: 1.1em;
+    padding: 0.6em 1em;
+    background-color: var(--color_accent);
+    border: none;
+    border-radius: var(--border_size);
+    box-shadow: 0 6px 6px var(--color_accent_light);
+    cursor: pointer;
+    transition:
+      transform 0.2s cubic-bezier(0.075, 0.82, 0.165, 1),
+      box-shadow 0.3s ease;
+
+    &:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 9px var(--color_accent_light);
+    }
+    &:active {
+      transform: scale(0.99);
+      box-shadow: 0 4px 6px var(--color_accent_light);
+    }
+  }
+  .disabled {
+    pointer-events: none;
+    transform: scale(0.9);
+    cursor: none;
+    opacity: 0.8;
+  }
+</style>
