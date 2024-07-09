@@ -1,0 +1,46 @@
+---
+import { parseDate } from "../helpers/date";
+import IconCalendar from "@icons/calendar.astro"
+import IconReload from "@icons/reload.astro"
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+
+const created = parseDate(post.createdAt);
+const updated = parseDate(post.updatedAt);
+---
+
+<article>
+  <div>
+    <span>
+      <IconCalendar />
+      {created}
+    </span>
+
+    <span>
+      <IconReload />
+      {updated}
+    </span>
+  </div>
+  <p>
+    {post.content}
+  </p>
+</article>
+
+<style>
+  article {
+    padding: var(--padding_boxes);
+    border: 1px solid var(--color_secondary);
+
+    & > div {
+      color: var(--color_secondary_text);
+    }
+
+    & > div > span {
+      display: flex;
+    }
+  }
+</style>

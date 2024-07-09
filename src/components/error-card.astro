@@ -1,0 +1,58 @@
+---
+interface Props {
+  error?: {
+    message: string;
+  };
+}
+
+const { error } = Astro.props;
+
+const defaultMessage = "Please retry o re-chargue tab.";
+---
+
+<article class="error" id="card">
+  <div>
+    <h2 class="error__h2">Oh, an error ocurred!</h2>
+
+    <p class="error__p">
+      {error.message ?? defaultMessage}
+    </p>
+  </div>
+</article>
+
+<script defer>
+
+  const $article = document.getElementById("card");
+
+  setTimeout(() => {
+    $article.style.opacity = "0";
+    $article.style.transform = "scale(.4)";
+    $article.style.transform = "translateX(-20%)";
+
+  }, 3000);
+</script>
+
+<style>
+  .error {
+    position: fixed;
+    z-index: 90;
+    bottom: 40px;
+    max-width: 400px;
+    width: 100%;
+    min-height: 80px;
+    border: 2px solid red;
+    box-shadow: 0 0 9px rgba(255, 0, 0, 0.7);
+    background-color: rgba(255, 0, 0, 0.4);
+    padding: var(--padding_boxes);
+    color: white;
+    pointer-events: none;
+
+    transition:
+      transform 0.2s ease-out,
+      opacity 0.4s ease-in-out;
+  }
+  .error__h2 {
+  }
+  .error__p {
+  }
+</style>

@@ -1,0 +1,46 @@
+---
+import IconPlus from '@icons/plus.astro'
+---
+
+<label for="avatar" class="sign__label--avatar" title="Take a picture.">
+  <input type="file" accept="image/*" id="avatar" name="avatar" hidden />
+
+  <img src="" hidden class="sign__label--avatar selected-avatar" loading="lazy" />
+
+  <IconPlus />
+</label>
+
+<script>
+  const $input = document.querySelector('#avatar') as any
+  const $selectedAvatar = document.querySelector('.selected-avatar') as HTMLImageElement
+
+
+  $input.addEventListener('change', (e) => {
+    const src = URL.createObjectURL(e.target.files[0])
+
+    $selectedAvatar.setAttribute('src', src)
+    $selectedAvatar.removeAttribute('hidden')
+  })
+</script>
+
+<style>
+  .sign__label--avatar {
+    position: relative;
+    border: 1px solid var(--color_secondary);
+    border-radius: 100%;
+    height: 70px;
+    width: 70px;
+    cursor: pointer;
+
+    & .selected-avatar {
+      aspect-ratio: 4 / 4;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    & > svg {
+      position: absolute;
+      right: 0;
+    }
+  }
+</style>

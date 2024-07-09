@@ -1,0 +1,149 @@
+---
+import IconPoint from "@icons/point.astro";
+import { parseDate } from "../helpers/date";
+import { getUser } from "@services/api";
+import Carrousell from "./carrousell.astro";
+import PostImage from "./post-image.astro";
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+
+
+const user = await getUser(post?.userId).catch(e => console.log(e));
+const avatar = JSON.parse(user[0].avatar)[0].secureUrl;
+
+const imagesPaths = JSON.parse(post?.images)?.map((path) => path.secureUrl);
+const hasMultipleImages = imagesPaths.length > 1;
+const hasImages = JSON.parse(post?.images).length !== 0;
+const longerContent = post.content.length > 200;
+---
+
+<article class="post">
+  <div class="post__container">
+    <h2 class="post__h2">
+      {user[0]?.name}
+      <IconPoint />
+      <a>@{user[0]?.username}</a>
+      <IconPoint />
+
+      <span>
+        {parseDate(post.createdAt)}
+      </span>
+    </h2>
+    <p
+      class="post__content ocult"
+    >
+      {post?.content}
+    </p>
+    {longerContent && <button class="post__content__btn">More...</button>}
+
+    {
+      hasImages ? (
+        hasMultipleImages ? (
+          <Carrousell imagesPaths={imagesPaths} />
+        ) : (
+          <PostImage postImage={imagesPaths[0]} />
+        )
+      ) : null
+    }
+  </div>
+  <a
+    class="post__btn"
+    title=`Go to @${user[0].username} profile!`
+    href={`/users/${user[0].id}`}
+  >
+    <img src={avatar} alt="" class="post__btn__avatar" loading="lazy" />
+  </a>
+</article>
+
+<script>
+  const $seeMoreBtn = document.querySelector('.post__content__btn') ;
+  const $paragraph = document.querySelector('.post__content');
+
+  let ocult = true;
+
+  $seeMoreBtn.addEventListener('click', () => {
+    ocult = !ocult
+
+    if (ocult === false) {
+
+      $paragraph.classList.remove('ocult')
+      $paragraph.style.maxHeight = 'none'
+      console.log($paragraph.className)
+
+      return
+    }
+    $paragraph.classList.add('ocult')
+    $paragraph.style.maxHeight = '200px'
+
+
+    console.log($paragraph.className)
+  })
+</script>
+<style>
+  .post {
+    position: relative;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: start;
+    border-bottom: 1px solid var(--color_secondary);
+    padding: var(--padding_boxes) 8px;
+    width: 100%;
+  }
+  .post__container {
+    max-width: 89%;
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    gap: 6px;
+  }
+  .post__h2 {
+    display: flex;
+    align-items: center;
+    font-size: large;
+
+    & > svg {
+      color: var(--color_secondary);
+    }
+    & > a,
+    & > span {
+      color: var(--color_secondary_text);
+      font-size: small;
+      font-style: italic;
+    }
+  }
+  .post__content {
+    overflow: hidden;
+    text-align: left;
+  }
+ .ocult {
+    max-height: 200px;
+  }
+  .post__content__btn {
+    position: absolute;
+    bottom: 2%;
+    right: 2%;
+  }
+  .post__image {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center;
+    border-radius: var(--border_size);
+  }
+
+  .post__btn {
+    display: flex;
+    border: 1px solid var(--color_secondary);
+    border-radius: 100%;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .post__btn__avatar {
+    aspect-ratio: 4 / 4;
+    object-fit: cover;
+    object-position: center;
+  }
+</style>

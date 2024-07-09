@@ -1,0 +1,18 @@
+---
+interface Props {
+  postImage: string;
+}
+
+const { postImage } = Astro.props
+---
+
+<img src={postImage} alt="Post image." loading="lazy">
+
+<style>
+  img {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-fit: center;
+    border-radius: var(--border_size);
+  }
+</style>

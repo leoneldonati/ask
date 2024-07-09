@@ -1,0 +1,123 @@
+---
+import IconPlus from "@icons/plus.astro";
+import LeftArrow from "@icons/left-arrow.astro";
+import RightArrow from "@icons/right-arrow.astro";
+---
+
+<label for="images" class="images">
+  <input
+    type="file"
+    name="images"
+    id="images"
+    accept="images/*"
+    multiple
+    hidden
+    max="4"
+  />
+
+  <div class="images-wrapper"><IconPlus /></div>
+  <button id="left" type="button"><LeftArrow /></button>
+  <button id="right" type="button"><RightArrow /></button>
+</label>
+<style>
+  .images {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+  .images-wrapper {
+    aspect-ratio: 16/9;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    gap: 2px;
+    border: 1px solid var(--color_secondary);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    transform: translateX(0);
+  }
+  #right,
+  #left {
+    position: absolute;
+    cursor: pointer;
+    top: 2%;
+    background: var(--color_secondary);
+    border: none;
+    display: flex;
+    padding: 10px;
+    border-radius: 100%;
+    transition: transform 0.2s ease-out;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+
+    &:active {
+      transform: scale(1);
+    }
+  }
+  #right {
+    right: 2%;
+  }
+
+  #left {
+    left: 2%;
+  }
+</style>
+
+<script>
+  const $imageSelector = document.querySelector("#images");
+  const $imagesWrapper = document.querySelector(
+    ".images-wrapper"
+  ) as HTMLElement;
+  const $leftBtn1 = document.querySelector("#left") as HTMLButtonElement;
+  const $rightBtn1 = document.querySelector("#right") as HTMLButtonElement;
+
+  let files = [];
+  let position: number = 0;
+  $leftBtn1.addEventListener("click", () => {
+    if (position === 0) return;
+
+    position += 100;
+
+    $imagesWrapper.style.transform = `translateX(${position}%)`;
+  });
+
+  $rightBtn1.addEventListener("click", () => {
+    if (files.length === 0) return;
+
+    if (position === -(files.length - 1) * 100) return;
+
+    position -= 100;
+
+    $imagesWrapper.style.transform = `translateX(${position}%)`;
+  });
+
+  $imageSelector.addEventListener("change", (ev: any) => {
+    files = Object.values(ev.target?.files);
+
+    if (files.length > 1) {
+      for (const file of files) {
+        const src = URL.createObjectURL(file);
+        const image = document.createElement("img");
+
+        image.setAttribute("src", src);
+        image.setAttribute("alt", `Image post.`);
+        image.style.aspectRatio = '16 / 9';
+
+        $imagesWrapper.append(image);
+      }
+
+      return;
+    }
+
+    const src = URL.createObjectURL(files[0]);
+    const image = document.createElement("img");
+
+    image.setAttribute("src", src);
+    image.setAttribute("alt", "Post image.");
+    image.style.width = "100%";
+
+    $imagesWrapper.appendChild(image);
+  });
+</script>
