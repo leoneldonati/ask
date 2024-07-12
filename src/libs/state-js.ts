@@ -1,41 +1,57 @@
-type CreateState = <State>(state: State, options?: { persist: boolean; }) => {
-  get: () => State,
-  set: (newState: any) => void,
-  listen: (cb: (state: State) => void) => void
-}
+import { readFile, writeFile } from "fs/promises";
+type CreateState = <State>(
+  state: State,
+  options?: { persist: boolean }
+) => {
+  get: () => Promise<State>;
+  set: (newState: any) => void;
+  listen: (cb: (state: State) => void) => void;
+};
 
-
-const 
-createState: CreateState = (statePayload, options) => {
-
+const createState: CreateState = (statePayload, options) => {
   let state;
-  state = statePayload
+  state = statePayload;
 
-  
-  const get = () => {
-    let savedState
-    return options?.persist ? savedState : state 
-  }
+  const get = async () => {
+    if (options?.persist) {
+      try {
+        const savedState = await readFile("./src/stores/state.txt", 'utf8')
+
+        return JSON.parse(savedState)
+      }
+      catch(err) {
+        return console.error(err)
+      }
+    }
+
+    return state
+  };
 
   const set = (newState) => {
-    
-    state = newState
+    state = newState;
 
-    listen()
+    listen();
 
-    options?.persist
-  }
-
+    if (options?.persist) {
+      writeFile(
+        "./src/stores/state.txt",
+        JSON.stringify(newState),
+        {}
+      )
+      .then(() => {})
+      .catch(err => console.log(err))
+    }
+      
+  };
 
   const listen = (cb?) => {
-
-    cb && cb(state)
-  }
+    cb && cb(state);
+  };
   return {
     get,
     set,
-    listen
-  }
-}
+    listen,
+  };
+};
 
-export { createState }
+export { createState };

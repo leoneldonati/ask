@@ -11,7 +11,7 @@ export const authStore = createState<AuthStore>({
   isAuth: false,
   userLogged: null,
   errors: null
-})
+}, { persist: true })
 
 authStore.listen(state => {
    console.log(state)
