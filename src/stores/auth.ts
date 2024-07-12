@@ -1,9 +1,9 @@
 import { createState } from "@libs/state-js";
 
 interface AuthStore  {
-  isAuth?: boolean;
-  userLogged?: null | UserLogged;
-  errors?: {
+  isAuth: boolean;
+  userLogged: null | UserLogged;
+  errors: {
     message: string;
   } | null;
 }
@@ -16,6 +16,6 @@ export const authStore = createState<AuthStore>({
 authStore.listen(state => {
    console.log(state)
    if (state.errors !== null) {
-     return setTimeout(() => authStore.set({ errors: null }), 3000)
+     setTimeout(() => authStore.set({ errors: null, isAuth: false, userLogged: null }), 3000)
    }
  })
