@@ -1,26 +1,25 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import { authStore } from "../../stores/auth";
-import PostCardProfile from "../../components/post-card-profile.astro";
+import Layout from "@layout";
+import { authStore } from "@stores/auth";
+import PostCardProfile from "@components/post-card-profile.astro";
 import IconPoint from "@icons/point.astro";
 import IconCalendarClock from "@icons/calendar-clock.astro";
 import IconCake from "@icons/cake.astro";
 import IconMapPin from "@icons/map-pin.astro";
 import LeftArrow from "@icons/left-arrow.astro";
-import defaultAvatar from "../../assets/default-avatar.svg";
-import { getUserPosts } from "../../services/api";
-const userLogged = authStore.get().userLogged!;
+import defaultAvatar from "@assets/default-avatar.svg";
+import { getUserPosts } from "@services/api";
+const { userLogged } = await authStore.get();
 
-const avatar =
-  (JSON.parse(userLogged.avatar)[1]?.secureUrl as string) ?? defaultAvatar.src;
+const avatar = userLogged.avatar[1]?.secureUrl ?? defaultAvatar.src;
 const createdAt = new Date(userLogged.createdAt).toLocaleDateString("es");
-const userBd = new Date(userLogged.DATE).toLocaleDateString("es");
-const location = JSON.parse(userLogged.location);
+const userBd = new Date(userLogged.date).toLocaleDateString("es");
+const location = userLogged.location;
 
 const headers = new Headers();
 headers.append("Cookie", `session=${Astro.cookies.get("session")?.value}`);
 
-const posts = await getUserPosts(userLogged.id).catch(e => console.log(e));
+const posts = await getUserPosts(userLogged._id).catch((e) => console.log(e));
 ---
 
 <Layout page={`@${userLogged.username}`} description={userLogged.bio}>
@@ -28,7 +27,7 @@ const posts = await getUserPosts(userLogged.id).catch(e => console.log(e));
     <a href="/" class="profile__btn--back" title="Go home.">
       <LeftArrow />
     </a>
-    
+
     <div class="profile__container">
       <img
         class="profile__img"
@@ -62,7 +61,7 @@ const posts = await getUserPosts(userLogged.id).catch(e => console.log(e));
         </ul>
       </div>
     </div>
-    <a class="profile__btn--edit" href={`/profile/${userLogged.id}`}>
+    <a class="profile__btn--edit" href={`/profile/${userLogged._id}`}>
       Edit profile
     </a>
 

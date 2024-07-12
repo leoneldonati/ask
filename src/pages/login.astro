@@ -21,6 +21,8 @@ if (Astro.request.method === "POST") {
       const data = await res.json();
 
       authStore.set({ userLogged: data, isLogged: true, errors: null })
+
+
       return Astro.redirect("/");
     }
     const error = await res.json();
@@ -30,7 +32,7 @@ if (Astro.request.method === "POST") {
   }
 }
 
-const { errors } = authStore.get();
+// const { errors } = authStore.get();
 ---
 
 <Layout page="Login" description="">
@@ -94,7 +96,7 @@ const { errors } = authStore.get();
 
     <!-- error card -->
 
-    {errors !== null ? <ErrorCard error={errors} /> : null}
+    <!-- {errors !== null ? <ErrorCard error={errors} /> : null} -->
   </section>
 </Layout>
 

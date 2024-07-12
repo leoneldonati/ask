@@ -8,7 +8,7 @@ import BubblePlus from "@icons/bubble-plus.astro";
 import { getPosts } from "@services/api";
 import IconLeft from "@icons/toggle-left.astro";
 
-const userLogged = authStore.get().userLogged!;
+const { userLogged } = await authStore.get();
 
 const headers = new Headers();
 headers.append("Cookie", `session=${Astro.cookies.get("session")?.value}`);
@@ -23,6 +23,9 @@ try {
 } catch (e) {
   console.log(e);
 }
+
+console.log(userLogged)
+
 ---
 
 <Layout page="Home" description="">

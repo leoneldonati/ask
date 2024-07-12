@@ -13,7 +13,8 @@
       "@db": ["./src/db"],
       "@helpers/*": ["./src/helpers/*"],
       "@libs/*": ["./src/libs/*"],
-      "@layout": ["./src/layouts/Layout.astro"]
+      "@layout": ["./src/layouts/Layout.astro"],
+      "@assets/*": ["./src/assets/*"]
     }
   }
 }

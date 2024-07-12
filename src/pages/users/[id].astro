@@ -1,31 +1,36 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import { authStore } from "../../stores/auth";
-import { parseDate } from "../../helpers/date";
-import PostCardProfile from "../../components/post-card-profile.astro";
+import Layout from "@layout";
+import { authStore } from "@stores/auth";
+import { parseDate } from "@helpers/date";
+import PostCardProfile from "@components/post-card-profile.astro";
+import IconPoint from "@icons/point.astro"
+import IconCalendarClock from "@icons/calendar-clock.astro"
+import IconCake from "@icons/cake.astro"
+import IconMapPin from "@icons/map-pin.astro"
 
-const { id: userId } = authStore.get().userLogged!
+const { _id: userId } = authStore.get().userLogged!
+
 const id = Astro.params?.id
 
 if (id === userId) return Astro.redirect('/profile')
 
 const headers = new Headers()
 headers.append("Cookie", `session=${Astro.cookies.get("session")?.value}`);
-// const res = await fetch(`http://localhost:4321/api/users/${id}`, { headers })
+ const res = await fetch(`http://localhost:4321/api/users/${id}`, { headers })
 
-// if (!res.ok) return Astro.redirect('/')
+ if (!res.ok) return Astro.redirect('/')
 
-// const user = await res.json()
+ const user = await res.json()
 
-// const avatar = JSON.parse(user.avatar).original.secureUrl
+ const avatar = user.avatar.original.secureUrl
 
-// const userBd = parseDate(user.DATE)
-// const createdAt = parseDate(user.createdAt)
+ const userBd = parseDate(user.date)
+ const createdAt = parseDate(user.createdAt)
 
 
-// console.log(user)
+ console.log(user)
 ---
-<!-- 
+
 <Layout page={`@${user.username}`} description={user.bio}>
   <section class="profile">
     <img
@@ -71,7 +76,7 @@ headers.append("Cookie", `session=${Astro.cookies.get("session")?.value}`);
 
     </div>
   </section>
-</Layout> -->
+</Layout>
 <style>
   .profile {
     min-height: 100dvh;
