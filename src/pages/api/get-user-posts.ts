@@ -1,5 +1,6 @@
+import { usersModel } from "@db";
 import type { APIRoute } from "astro";
-import { db, eq, Posts } from "astro:db";
+import { ObjectId } from "mongodb";
 import { resJson } from "src/helpers/response";
 
 export const GET: APIRoute = async ({ request }) => {
@@ -14,12 +15,9 @@ export const GET: APIRoute = async ({ request }) => {
     );
 
   try {
-    const result = await db
-      .select()
-      .from(Posts)
-      .where(eq(Posts.userId, userId));
+    const result = await usersModel.findOne({ _id: new ObjectId(userId)})
 
-    return resJson(result);
+    return resJson(result?.posts);
   } catch (e) {
     return resJson({ message: "Error on server" }, { status: 500 });
   }
