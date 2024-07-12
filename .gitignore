@@ -28,3 +28,5 @@ temp-files
 
 # pnpm lock
 pnpm-lock.yaml
+
+state.txt
