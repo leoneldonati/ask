@@ -7,5 +7,12 @@ export default defineConfig({
   output: 'server',
   adapter: node({
     mode: "standalone"
-  })
+  }),
+  vite: {
+    build: {
+      rollupOptions: {
+        external: ['mock-aws-s3', 'aws-sdk', 'nock']
+      }
+    }
+  }
 });
