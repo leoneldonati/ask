@@ -8,7 +8,10 @@ import BubblePlus from "@icons/bubble-plus.astro";
 import { getPosts } from "@services/api";
 import IconLeft from "@icons/toggle-left.astro";
 
-const { userLogged } = await authStore.get();
+const { userLogged, isAuth } = await authStore.get();
+
+if (!isAuth) return Astro.redirect('/login')
+
 
 const headers = new Headers();
 headers.append("Cookie", `session=${Astro.cookies.get("session")?.value}`);

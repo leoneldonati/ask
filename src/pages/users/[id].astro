@@ -8,8 +8,9 @@ import IconCalendarClock from "@icons/calendar-clock.astro"
 import IconCake from "@icons/cake.astro"
 import IconMapPin from "@icons/map-pin.astro"
 
-const { _id: userId } = authStore.get().userLogged!
+const { userLogged } = await authStore.get()
 
+const { _id: userId } = userLogged
 const id = Astro.params?.id
 
 if (id === userId) return Astro.redirect('/profile')

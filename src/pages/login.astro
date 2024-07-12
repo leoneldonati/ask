@@ -12,27 +12,30 @@ if (Astro.request.method === "POST") {
       method: "post",
       body: formData,
     });
-    
+
     if (res.ok) {
       const sessionString = res.headers.get("cookie")?.split("=")[0];
 
-      Astro.cookies.set('session', sessionString)
+      console.log(sessionString);
+      Astro.cookies.set("session", sessionString ?? "", {
+        expires: new Date(Date.now() * 3600),
+        httpOnly: true,
+      });
 
       const data = await res.json();
 
-      authStore.set({ userLogged: data, isLogged: true, errors: null })
-
+      await authStore.set({ userLogged: data, isAuth: true, errors: null });
 
       return Astro.redirect("/");
     }
     const error = await res.json();
-    authStore.set({ errors: error })
+    await authStore.set({ errors: error, isAuth: false, userLogged: null });
   } catch (e) {
     console.log(e);
   }
 }
 
-// const { errors } = authStore.get();
+const { errors } = await authStore.get();
 ---
 
 <Layout page="Login" description="">
@@ -96,7 +99,7 @@ if (Astro.request.method === "POST") {
 
     <!-- error card -->
 
-    <!-- {errors !== null ? <ErrorCard error={errors} /> : null} -->
+    {errors !== null ? <ErrorCard error={errors} /> : null}
   </section>
 </Layout>
 
