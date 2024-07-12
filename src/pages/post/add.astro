@@ -6,18 +6,18 @@ import { authStore } from "@stores/auth";
 const { userLogged } = authStore.get();
 if (Astro.request.method === "POST") {
   const form = await Astro.request.formData().catch(e => console.log(e)) as FormData;
-  form.append("userId", userLogged?.id);
+  form.append("userId", userLogged?._id);
   return fetch("http://localhost:4321/api/add-post", {
     method: "POST",
     body: form,
   })
-    .then((res) => {
+    .then(() => {
       return Astro.redirect("/");
     })
     .catch((err) => console.error(err));
 }
 
-const avatar = JSON.parse(userLogged.avatar)[0]?.secureUrl
+const avatar = userLogged.avatar[0]?.secureUrl
 ---
 
 <Layout

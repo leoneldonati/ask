@@ -1,6 +1,7 @@
+import { usersModel } from "@db";
 import type { APIRoute } from "astro";
-import { Users, db, eq } from "astro:db";
-import { resJson } from "src/helpers/response";
+import { ObjectId } from "mongodb";
+import { resJson } from "@helpers/response";
 
 export const GET:APIRoute = async ({ request }) => {
   const id = new URL(request.url).searchParams.get('id')
@@ -9,7 +10,7 @@ export const GET:APIRoute = async ({ request }) => {
 
   if (wrongParam) return resJson({ message: 'Wrong "id" param.' }, { status: 400 })
   try {
-    const result = await db.select().from(Users).where(eq(Users.id, id))
+    const result = await usersModel.findOne({ _id: new ObjectId(id) })
 
     return resJson(result)
   }

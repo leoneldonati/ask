@@ -1,7 +1,6 @@
+import { postsModel } from "@db";
 import type { APIRoute } from "astro";
-import { Posts, db } from "astro:db";
 import { resJson } from "src/helpers/response";
-import { encrypt } from "src/libs/bcrypt";
 import { uploadFile } from "src/libs/cld";
 import { optimizePostAsset } from "src/libs/sharp";
 
@@ -44,19 +43,18 @@ export const POST: APIRoute = async ({ request }) => {
 
       uploadedFiles = [uploadedFile];
     } 
-
-
-    const hashId = (await encrypt(userId)).hash.toString();
-    await db.insert(Posts).values({
+    
+    const postSchema = {
       content,
       userId,
       createdAt: new Date(Date.now()),
-      id: `post-${hashId}-${crypto.randomUUID()}-${Math.random()}`,
       updatedAt: new Date(Date.now()),
       images: uploadedFiles
-        ? JSON.stringify(uploadedFiles)
-        : JSON.stringify([]),
-    });
+        ? uploadedFiles
+        : [],
+    }
+
+    await postsModel.insertOne(postSchema)
 
     return resJson({ message: "Posted!" });
   } catch (e) {

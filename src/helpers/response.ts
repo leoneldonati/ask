@@ -1,7 +1,12 @@
 const headers = new Headers();
 headers.append("Content-Type", `application/json`);
-async function resJson(payload: any, options?: { status: number }) {
-  return new Response(JSON.stringify(payload), {status: options?.status ?? 200, headers})
+const append = (key, value) => headers.append(key, value);
+function resJson(payload: any, options?: { status: number }) {
+
+  return new Response(JSON.stringify(payload), {
+    status: options?.status ?? 200,
+    headers,
+  });
 }
 
-export { resJson }
+export { resJson, append };

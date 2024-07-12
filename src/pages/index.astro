@@ -1,31 +1,27 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import { authStore } from "../stores/auth";
-import PostCard from "../components/post-card.astro";
+import Layout from "@layout";
+import { authStore } from "@stores/auth";
+import PostCard from "@components/post-card.astro";
 import IconSearch from "@icons/search.astro";
 import IconUser from "@icons/user.astro";
 import BubblePlus from "@icons/bubble-plus.astro";
-import { getPosts } from "../services/api";
+import { getPosts } from "@services/api";
 import IconLeft from "@icons/toggle-left.astro";
-
-if (!authStore.get().isAuth) return Astro.redirect("/login");
 
 const userLogged = authStore.get().userLogged!;
 
 const headers = new Headers();
 headers.append("Cookie", `session=${Astro.cookies.get("session")?.value}`);
 
-const avatarSrc = JSON.parse(userLogged?.avatar)[0].secureUrl;
+const avatarSrc = userLogged?.avatar[0].secureUrl;
 
-let posts
+let posts = [];
 try {
-
   const postsFetch = await getPosts(15, { headers });
 
-  posts = postsFetch
-}
-catch (e) {
-console.log(e)
+  posts = postsFetch;
+} catch (e) {
+  console.log(e);
 }
 ---
 
@@ -50,7 +46,7 @@ console.log(e)
       <button class="home__header__btn--session" title="Close session?">
         <img
           src={avatarSrc}
-          alt={userLogged.name}
+          alt={userLogged?.name}
           loading="lazy"
           class="home__header_avatar"
           transition:name="avatar"
@@ -61,7 +57,7 @@ console.log(e)
     <div class="home__container">
       <ul>
         <li>
-          <a href=`/settings/${userLogged.id}`>Settings</a>
+          <a href=`/settings/${userLogged?._id}`>Settings</a>
         </li>
         <li>
           <button id="theme-btn">
@@ -72,8 +68,8 @@ console.log(e)
       </ul>
 
       <div class="home__container--posts">
-        {posts.length !== 0 && posts.map((post) => <PostCard post={post} />)}
-
+        {posts.length !== 0 ? posts.map((post) => <PostCard post={post} />) : <span class="home__container--alert">There is no news here!</span>}
+        
         <a
           href="/post/add"
           class="home__btn--add-post"
@@ -87,9 +83,6 @@ console.log(e)
 </Layout>
 
 <script>
-  import iconLeft from "../assets/toggle-left.svg";
-  import iconRight from "../assets/toggle-right.svg";
-
   const $themeBtn = document.querySelector("#theme-btn");
   const $body = document.querySelector("body");
   $themeBtn.addEventListener("click", () => {
@@ -198,8 +191,13 @@ console.log(e)
     overflow-y: scroll;
     border-left: 1px solid var(--color_secondary);
     border-right: 1px solid var(--color_secondary);
+    text-align: center;
     &::-webkit-scrollbar {
       display: none;
+    }
+
+    .home__container--alert {
+      font-size: xx-large;
     }
   }
 

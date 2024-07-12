@@ -1,18 +1,20 @@
 interface UserLogged {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   username: string;
   hash: string;
   bio: string;
-  DATE: Date;
+  date: Date | null;
   isVerified: boolean;
-  createdAt: string;
-  updatedAt: string;
-  settings: string;
-  location: null;
-  avatar: string;
+  createdAt: Date;
+  updatedAt: Date;
+  settings: object;
+  location: object;
+  avatar: Array<{ secureUrl: string, publicId: string }>;
   posts: Post[];
+  followers: [];
+  followed: []
 }
 
 interface Post {

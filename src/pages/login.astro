@@ -8,26 +8,23 @@ import BrandInstagram from "../icons/brand-instagram.astro";
 if (Astro.request.method === "POST") {
   try {
     const formData = await Astro.request.formData();
-    const res = await fetch(`http://localhost:4321/api/login`, {
+    const res = await fetch(`http://localhost:4321/api/login-user`, {
       method: "post",
       body: formData,
     });
-
+    
     if (res.ok) {
+      const sessionString = res.headers.get("cookie")?.split("=")[0];
 
-      console.log(Astro.cookies.get('Cookies'))
-      //   const sessionString = res.headers.get("cookie")?.split("=");
+      Astro.cookies.set('session', sessionString)
 
-      //   Astro.cookies.set("session", sessionString![1]);
+      const data = await res.json();
 
-      //   const data = await res.json();
-
-      //   authStore.set({ isAuth: true, userLogged: data, errors: null });
-
-      //   return Astro.redirect("/");
-      // }
-      // const error = await res.json();
+      authStore.set({ userLogged: data, isLogged: true, errors: null })
+      return Astro.redirect("/");
     }
+    const error = await res.json();
+    authStore.set({ errors: error })
   } catch (e) {
     console.log(e);
   }

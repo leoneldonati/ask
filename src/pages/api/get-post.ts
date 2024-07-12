@@ -1,5 +1,5 @@
+import { postsModel } from "@db";
 import type { APIRoute } from "astro";
-import { Posts, db } from "astro:db";
 import { resJson } from "src/helpers/response";
 
 export const GET:APIRoute = async ({ request }) => {
@@ -12,12 +12,12 @@ export const GET:APIRoute = async ({ request }) => {
 
   try {
 
-    const result = await db.select().from(Posts).limit(parseInt(q))
-
-    console.log(result)
+    const result = await postsModel.find({}).limit(Number(q)).toArray()
+    
     return resJson(result)
   }
   catch (e) {
+    console.log(e)
     return resJson({ message: 'Error on server.'}, { status: 500 })
   }
 }
