@@ -17,12 +17,19 @@ interface UserLogged {
   followed: []
 }
 
+interface PostComment {
+  owner: UserLogged;
+  content: string;
+  _id: string;
+}
 interface Post {
-  id: string;
+  _id: string;
   userId: string;
   userOwner: UserLogged;
   content: string;
   images: any;
   createdAt: string;
   updatedAt: string;
+  likes: [];
+  comments: PostComment[]
 }
