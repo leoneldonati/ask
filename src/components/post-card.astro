@@ -1,7 +1,6 @@
 ---
 import IconPoint from "@icons/point.astro";
 import { parseDate } from "../helpers/date";
-import { getUser } from "@services/api";
 import Carrousell from "./carrousell.astro";
 import PostImage from "./post-image.astro";
 interface Props {
@@ -10,9 +9,7 @@ interface Props {
 
 const { post } = Astro.props;
 
-const user = (await getUser(post?.userId).catch((e) =>
-  console.log(e)
-)) as UserLogged;
+const user = post.userOwner
 
 const avatar = user.avatar[0].secureUrl;
 const imagesPaths = post?.images?.map((path) => path.secureUrl);
