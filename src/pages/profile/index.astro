@@ -9,6 +9,9 @@ import IconMapPin from "@icons/map-pin.astro";
 import LeftArrow from "@icons/left-arrow.astro";
 import defaultAvatar from "@assets/default-avatar.svg";
 import { getUserPosts } from "@services/api";
+
+if (!Astro.cookies.get("session")) return Astro.redirect("/login");
+
 const { userLogged } = await authStore.get();
 
 const avatar = userLogged.avatar[1]?.secureUrl ?? defaultAvatar.src;

@@ -3,13 +3,13 @@ import AvatarSelector from "@components/avatar-selector.astro";
 import Layout from "../../layouts/Layout.astro";
 import { authStore } from "../../stores/auth";
 
+if (!Astro.cookies.get("session")) return Astro.redirect("/login");
+
 const id = Astro.params?.id;
 
-const userLogged = authStore.get().userLogged!;
+const { userLogged } = await authStore.get();
 
-if (userLogged.id !== id) return Astro.redirect('/')
-
-
+if (userLogged._id !== id) return Astro.redirect("/");
 
 const name = userLogged.name.split(" ")[0];
 const lastname = userLogged.name.split(" ")[1];

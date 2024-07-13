@@ -3,9 +3,13 @@ import Layout from "src/layouts/Layout.astro";
 import ImageSelector from "@components/post-image-selector.astro";
 import { authStore } from "@stores/auth";
 
-const { userLogged } = authStore.get();
+if (!Astro.cookies.get("session")) return Astro.redirect("/login");
+
+const { userLogged } = await authStore.get();
 if (Astro.request.method === "POST") {
-  const form = await Astro.request.formData().catch(e => console.log(e)) as FormData;
+  const form = (await Astro.request
+    .formData()
+    .catch((e) => console.log(e))) as FormData;
   form.append("userId", userLogged?._id);
   return fetch("http://localhost:4321/api/add-post", {
     method: "POST",
@@ -17,7 +21,7 @@ if (Astro.request.method === "POST") {
     .catch((err) => console.error(err));
 }
 
-const avatar = userLogged.avatar[0]?.secureUrl
+const avatar = userLogged.avatar[0]?.secureUrl;
 ---
 
 <Layout
@@ -25,13 +29,10 @@ const avatar = userLogged.avatar[0]?.secureUrl
   description="Add post on Ask! Fast, secure and private!"
 >
   <section class="add-post__section">
-    <div
-      class="add-post__wrapper--top"
-    >
-
-    <a href="/" title="Go back!">
-      <h1 transition:name="ask">Ask!</h1>
-    </a>
+    <div class="add-post__wrapper--top">
+      <a href="/" title="Go back!">
+        <h1 transition:name="ask">Ask!</h1>
+      </a>
 
       <img
         src={avatar}
@@ -41,14 +42,14 @@ const avatar = userLogged.avatar[0]?.secureUrl
         title={userLogged.name}
       />
     </div>
-    
+
     <form
-    class="add-post__form"
-    method="post"
-    enctype="multipart/form-data"
-    id="form"
+      class="add-post__form"
+      method="post"
+      enctype="multipart/form-data"
+      id="form"
     >
-    <p class="add-post__p">How your feels today?</p>
+      <p class="add-post__p">How your feels today?</p>
       <textarea
         name="content"
         id="content"
@@ -74,9 +75,7 @@ const avatar = userLogged.avatar[0]?.secureUrl
     justify-content: space-between;
     border-left: 1px solid var(--color_secondary);
     border-right: 1px solid var(--color_secondary);
-    padding:5em var(--padding_boxes);
-
-    
+    padding: 5em var(--padding_boxes);
   }
   .add-post__p {
     font-size: xx-large;
@@ -117,7 +116,7 @@ const avatar = userLogged.avatar[0]?.secureUrl
     display: flex;
     align-items: center;
     justify-content: space-between;
-    &  h1 {
+    & h1 {
       color: var(--color_accent);
       font-size: xx-large;
     }

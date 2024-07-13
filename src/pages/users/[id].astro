@@ -3,33 +3,34 @@ import Layout from "@layout";
 import { authStore } from "@stores/auth";
 import { parseDate } from "@helpers/date";
 import PostCardProfile from "@components/post-card-profile.astro";
-import IconPoint from "@icons/point.astro"
-import IconCalendarClock from "@icons/calendar-clock.astro"
-import IconCake from "@icons/cake.astro"
-import IconMapPin from "@icons/map-pin.astro"
+import IconPoint from "@icons/point.astro";
+import IconCalendarClock from "@icons/calendar-clock.astro";
+import IconCake from "@icons/cake.astro";
+import IconMapPin from "@icons/map-pin.astro";
 
-const { userLogged } = await authStore.get()
+if (!Astro.cookies.get("session")) return Astro.redirect("/login");
 
-const { _id: userId } = userLogged
-const id = Astro.params?.id
+const { userLogged } = await authStore.get();
 
-if (id === userId) return Astro.redirect('/profile')
+const { _id: userId } = userLogged;
+const id = Astro.params?.id;
 
-const headers = new Headers()
+if (id === userId) return Astro.redirect("/profile");
+
+const headers = new Headers();
 headers.append("Cookie", `session=${Astro.cookies.get("session")?.value}`);
- const res = await fetch(`http://localhost:4321/api/users/${id}`, { headers })
+const res = await fetch(`http://localhost:4321/api/users/${id}`, { headers });
 
- if (!res.ok) return Astro.redirect('/')
+if (!res.ok) return Astro.redirect("/");
 
- const user = await res.json()
+const user = await res.json();
 
- const avatar = user.avatar.original.secureUrl
+const avatar = user.avatar.original.secureUrl;
 
- const userBd = parseDate(user.date)
- const createdAt = parseDate(user.createdAt)
+const userBd = parseDate(user.date);
+const createdAt = parseDate(user.createdAt);
 
-
- console.log(user)
+console.log(user);
 ---
 
 <Layout page={`@${user.username}`} description={user.bio}>
@@ -72,9 +73,10 @@ headers.append("Cookie", `session=${Astro.cookies.get("session")?.value}`);
     </span>
     <hr />
     <div class="profile__container--posts">
-
-      {user.posts.length !== 0 && user.posts.map(post => <PostCardProfile post={post} />)}
-
+      {
+        user.posts.length !== 0 &&
+          user.posts.map((post) => <PostCardProfile post={post} />)
+      }
     </div>
   </section>
 </Layout>

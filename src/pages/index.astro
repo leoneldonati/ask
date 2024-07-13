@@ -8,27 +8,16 @@ import BubblePlus from "@icons/bubble-plus.astro";
 import { getPosts } from "@services/api";
 import IconLeft from "@icons/toggle-left.astro";
 
-const { userLogged, isAuth } = await authStore.get();
+if (!Astro.cookies.get("session")) return Astro.redirect("/login");
 
-if (!isAuth) return Astro.redirect('/login')
-
-
-const headers = new Headers();
-headers.append("Cookie", `session=${Astro.cookies.get("session")?.value}`);
+const { userLogged } = await authStore.get();
 
 const avatarSrc = userLogged?.avatar[0].secureUrl;
 
-let posts = [];
-try {
-  const postsFetch = await getPosts(15, { headers });
-
-  posts = postsFetch;
-} catch (e) {
-  console.log(e);
-}
-
-console.log(userLogged)
-
+const posts = await getPosts(15).catch((err) => {
+  console.log(err);
+  return [];
+});
 ---
 
 <Layout page="Home" description="">
@@ -74,8 +63,14 @@ console.log(userLogged)
       </ul>
 
       <div class="home__container--posts">
-        {posts.length !== 0 ? posts.map((post) => <PostCard post={post} />) : <span class="home__container--alert">There is no news here!</span>}
-        
+        {
+          posts.length !== 0 ? (
+            posts.map((post) => <PostCard post={post} />)
+          ) : (
+            <span class="home__container--alert">There is no news here!</span>
+          )
+        }
+
         <a
           href="/post/add"
           class="home__btn--add-post"

@@ -19,17 +19,18 @@ if (Astro.request.method === "POST") {
       console.log(sessionString);
       Astro.cookies.set("session", sessionString ?? "", {
         expires: new Date(Date.now() * 3600),
+        maxAge: Date.now() * 3600,
         httpOnly: true,
       });
 
       const data = await res.json();
 
-      await authStore.set({ userLogged: data, isAuth: true, errors: null });
+      await authStore.set({ userLogged: data, errors: null });
 
       return Astro.redirect("/");
     }
     const error = await res.json();
-    await authStore.set({ errors: error, isAuth: false, userLogged: null });
+    await authStore.set({ errors: error, userLogged: null });
   } catch (e) {
     console.log(e);
   }

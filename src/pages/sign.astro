@@ -4,30 +4,24 @@ import AvatarSelector from "../components/avatar-selector.astro";
 import Layout from "../layouts/Layout.astro";
 import ErrorCard from "@components/error-card.astro";
 
-if (Astro.request.method === 'POST') {
+if (Astro.request.method === "POST") {
   try {
-    const form = await Astro.request.formData()
-    
-    const res = await fetch('http://localhost:4321/api/sign', {
-      method: 'POST',
-      body: form
-    })
+    const form = await Astro.request.formData();
+
+    const res = await fetch("http://localhost:4321/api/sign", {
+      method: "POST",
+      body: form,
+    });
 
     if (res.ok) {
-      return Astro.redirect('/login')
+      return Astro.redirect("/login");
     }
-
-    authStore.set({ isAuth: false, errors: await res.json() })
+  } catch (e) {
+    await authStore.set({ errors: e, userLogged: null });
   }
-  catch (e) {
-    authStore.set({ isAuth: false, errors: e })
-  }
-
 }
 
-const { errors } = authStore.get()
-
-console.log(errors)
+const { errors } = await authStore.get();
 ---
 
 <Layout description="" page="Sign in">
@@ -121,7 +115,7 @@ console.log(errors)
       <button type="submit" class="sign__button"> sign up </button>
     </form>
 
-    {errors && <ErrorCard error={errors}/>}
+    {errors && <ErrorCard error={errors} />}
   </section>
 </Layout>
 <style>
