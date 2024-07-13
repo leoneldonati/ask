@@ -20,6 +20,7 @@ interface UserLogged {
 interface Post {
   id: string;
   userId: string;
+  userOwner: UserLogged;
   content: string;
   images: any;
   createdAt: string;
