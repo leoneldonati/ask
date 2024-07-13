@@ -37,6 +37,8 @@ if (Astro.request.method === "POST") {
 }
 
 const { errors } = await authStore.get();
+
+console.log(await authStore.get())
 ---
 
 <Layout page="Login" description="">
