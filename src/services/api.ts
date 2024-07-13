@@ -1,8 +1,6 @@
-async function getPosts(q?: number, options?: { headers: Headers }) {
+async function getPosts(q?: number) {
   try {
-    const res = await fetch(`http://localhost:4321/api/get-post?q=${q ?? 15}`, {
-      headers: options?.headers,
-    });
+    const res = await fetch(`http://localhost:4321/api/get-post?q=${q ?? 15}`);
 
     return await res.json();
   } catch (e) {
@@ -10,11 +8,9 @@ async function getPosts(q?: number, options?: { headers: Headers }) {
   }
 }
 
-async function getUser(id: string, options?: { headers: Headers }) {
+async function getUser(id: string) {
   try {
-    const res = await fetch(`http://localhost:4321/api/get-user?id=${id}`, {
-      headers: options?.headers,
-    });
+    const res = await fetch(`http://localhost:4321/api/get-user?id=${id}`);
 
     return await res.json();
   } catch (e) {
