@@ -21,11 +21,13 @@ if (Astro.request.method === "POST") {
     .catch((err) => console.error(err));
 }
 
-const avatar = userLogged.avatar[0]?.secureUrl;
+const avatar = userLogged?.avatar[0]?.secureUrl;
+
+console.log(userLogged)
 ---
 
 <Layout
-  page=`Share everithing ${userLogged.name}!`
+  page=`Share everithing ${userLogged?.name}!`
   description="Add post on Ask! Fast, secure and private!"
 >
   <section class="add-post__section">
@@ -39,7 +41,7 @@ const avatar = userLogged.avatar[0]?.secureUrl;
         alt=""
         loading="lazy"
         transition:name="avatar"
-        title={userLogged.name}
+        title={userLogged?.name}
       />
     </div>
 
