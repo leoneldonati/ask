@@ -8,7 +8,6 @@ import IconCake from "@icons/cake.astro";
 import IconMapPin from "@icons/map-pin.astro";
 import LeftArrow from "@icons/left-arrow.astro";
 import defaultAvatar from "@assets/default-avatar.svg";
-import { getUserPosts } from "@services/api";
 
 if (!Astro.cookies.get("session")) return Astro.redirect("/login");
 
@@ -22,7 +21,7 @@ const location = userLogged.location;
 const headers = new Headers();
 headers.append("Cookie", `session=${Astro.cookies.get("session")?.value}`);
 
-const posts = await getUserPosts(userLogged._id).catch((e) => console.log(e));
+const posts = userLogged?.posts
 ---
 
 <Layout page={`@${userLogged.username}`} description={userLogged.bio}>
