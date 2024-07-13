@@ -15,15 +15,21 @@ if (Astro.request.method === "POST") {
     method: "POST",
     body: form,
   })
-    .then(() => {
+    .then((res) => res.json())
+    .then(({ updatedUser }) => {
+      authStore.set({
+        userLogged: {
+          ...userLogged,
+          posts: [...updatedUser.posts] as Post[],
+        },
+        errors: null,
+      });
       return Astro.redirect("/");
     })
     .catch((err) => console.error(err));
 }
 
 const avatar = userLogged?.avatar[0]?.secureUrl;
-
-console.log(userLogged)
 ---
 
 <Layout
