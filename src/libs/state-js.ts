@@ -11,15 +11,17 @@ type CreateState = <State>(
 const createState: CreateState = (statePayload, options) => {
   let state;
   state = statePayload;
+  const path = "./src/state-js/state.txt"
 
+  
   if (options?.persist) {
-    writeFile("./src/stores/state.txt", JSON.stringify(state), {}).then(() => {})
+    writeFile(path, JSON.stringify(state), {}).then(() => {})
   }
 
   const get = async () => {
     if (options?.persist) {
       try {
-        const savedState = await readFile("./src/stores/state.txt", "utf8");
+        const savedState = await readFile(path, "utf8");
         
         return JSON.parse(savedState);
       } catch (err) {
@@ -38,7 +40,7 @@ const createState: CreateState = (statePayload, options) => {
     
     if (options?.persist) {
       try {
-        await writeFile("./src/stores/state.txt", JSON.stringify(state), {});
+        await writeFile(path, JSON.stringify(state), {});
       } catch (e) {
         console.log(e);
       }
