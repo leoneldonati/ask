@@ -17,9 +17,9 @@ if (Astro.request.method === "POST") {
       const sessionString = res.headers.get("cookie")?.split("=")[0];
 
       console.log(sessionString);
+      const ONE_HOUR = 3600000;
       Astro.cookies.set("session", sessionString ?? "", {
-        expires: new Date(Date.now() * 3600),
-        maxAge: Date.now() * 3600,
+        expires: new Date(Date.now() + ONE_HOUR),
         httpOnly: true,
       });
 
@@ -38,7 +38,7 @@ if (Astro.request.method === "POST") {
 
 const { errors } = await authStore.get();
 
-console.log(await authStore.get())
+console.log(await authStore.get());
 ---
 
 <Layout page="Login" description="">
