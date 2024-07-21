@@ -3,13 +3,20 @@ import IconPoint from "@icons/point.astro";
 import { parseDate } from "../helpers/date";
 import Carrousell from "./carrousell.astro";
 import PostImage from "./post-image.astro";
+import Heart from "@icons/heart.astro";
+import CommentIcon from "@icons/comment.astro";
+import { authStore } from "@stores/auth";
+import ActionBtn from "./action-btn.astro";
+import Comment from "@icons/comment.astro";
 interface Props {
   post: Post;
 }
 
+const { userLogged } = await authStore.get();
+
 const { post } = Astro.props;
 
-const user = post.userOwner
+const user = post.userOwner;
 
 const avatar = user.avatar[0].secureUrl;
 const imagesPaths = post?.images?.map((path) => path.secureUrl);
@@ -35,7 +42,9 @@ const longerContent = post.content.length > 200;
       {post?.content}
     </p>
     {longerContent && <button class="post__content__btn">More...</button>}
+  </div>
 
+  <div class="post__container--images">
     {
       hasImages ? (
         hasMultipleImages ? (
@@ -51,58 +60,75 @@ const longerContent = post.content.length > 200;
     title=`Go to @${user?.username} profile!`
     href={`/users/${user?._id}`}
   >
-    <img src={avatar ?? ""} alt={user.name} class="post__btn__avatar" loading="lazy" />
+    <img
+      src={avatar ?? ""}
+      alt={user.name}
+      class="post__btn__avatar"
+      loading="lazy"
+    />
   </a>
 
-  <div>
-    <button>
-      
-    </button>
-    <button>
-
-    </button>
+  <div class="post__container--actions-btn">
+    <ActionBtn
+      length={post?.likes?.length}
+      payload={{
+        from: user._id,
+        to: post._id
+      }}
+      action="like"
+    >
+      <Heart slot="icon" />
+    </ActionBtn>
+    <ActionBtn
+      length={post?.comments?.length}
+      payload={{
+        from: user._id,
+        to: post._id
+      }}
+      action="comment"
+    >
+      <Comment slot="icon"/>
+    </ActionBtn>
   </div>
 </article>
 
-<script defer>
-  const $seeMoreBtn = document.querySelector(".post__content__btn");
-  const $paragraph = document.querySelector(".post__content");
 
-  let ocult = true;
-
-  $seeMoreBtn.addEventListener("click", () => {
-    ocult = !ocult;
-
-    if (ocult === false) {
-      $paragraph.classList.remove("ocult");
-      $paragraph.style.maxHeight = "none";
-      console.log($paragraph.className);
-
-      return;
-    }
-    $paragraph.classList.add("ocult");
-    $paragraph.style.maxHeight = "200px";
-
-    console.log($paragraph.className);
-  });
-</script>
 <style>
   .post {
     position: relative;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    align-items: start;
+    display: grid;
+    grid-template-areas:
+      "info avatar"
+      "images images"
+      "buttons buttons";
+    grid-template-columns: 1fr auto;
+    gap: 6px;
     border-bottom: 1px solid var(--color_secondary);
     padding: var(--padding_boxes) 8px;
     width: 100%;
   }
   .post__container {
+    grid-area: info;
     max-width: 89%;
     width: 100%;
     display: flex;
     flex-flow: column;
     gap: 6px;
+  }
+  .post__container--actions-btn {
+    grid-area: buttons;
+    width: 100%;
+    max-width: 30%;
+    margin: 0 auto;
+
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+  }
+  .post__container--images {
+    grid-area: images;
   }
   .post__h2 {
     display: flex;
@@ -122,11 +148,13 @@ const longerContent = post.content.length > 200;
   .post__content {
     overflow: hidden;
     text-align: left;
+    max-width: 55ch;
   }
   .ocult {
     max-height: 200px;
   }
   .post__content__btn {
+    color: var(--color_accent);
     position: absolute;
     bottom: 2%;
     right: 2%;
@@ -139,7 +167,9 @@ const longerContent = post.content.length > 200;
   }
 
   .post__btn {
+    grid-area: avatar;
     display: flex;
+    max-width: fit-content;
     border: 1px solid var(--color_secondary);
     border-radius: 100%;
     overflow: hidden;
