@@ -8,7 +8,13 @@ import BubblePlus from "@icons/bubble-plus.astro";
 import { getPosts } from "@services/api";
 import IconLeft from "@icons/toggle-left.astro";
 
-if (!Astro.cookies.get("session")) return Astro.redirect("/login");
+if (!Astro.cookies.get("session")) {
+  await authStore.set({
+    userLogged: null,
+    errors: { message: "Session expired!" },
+  });
+  return Astro.redirect("/login");
+}
 
 const { userLogged } = await authStore.get();
 
@@ -18,7 +24,6 @@ const posts = await getPosts(15).catch((err) => {
   console.log(err);
   return [];
 });
-
 ---
 
 <Layout page="Home" description="">
@@ -65,7 +70,7 @@ const posts = await getPosts(15).catch((err) => {
 
       <div class="home__container--posts">
         {
-          posts.length !== 0 ? (
+          posts?.length !== 0 ? (
             posts.map((post) => <PostCard post={post} />)
           ) : (
             <span class="home__container--alert">There is no news here!</span>
