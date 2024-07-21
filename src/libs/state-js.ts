@@ -8,36 +8,36 @@ type CreateState = <State>(
   listen: (cb: (state: State) => void) => void;
 };
 
-const createState: CreateState = (statePayload, options) => {
-  let state;
-  state = statePayload;
-  const path = "./src/state-js/state.txt"
+const createState: CreateState = (state, options) => {
+  const id = crypto.randomUUID()
+  const path = `./src/state-js/state-${id}.txt`;
 
-  
   if (options?.persist) {
-    writeFile(path, JSON.stringify(state), {}).then(() => {})
+    writeFile(path, JSON.stringify(state), {}).then(() => {});
   }
 
   const get = async () => {
     if (options?.persist) {
       try {
         const savedState = await readFile(path, "utf8");
-        
+
         return JSON.parse(savedState);
       } catch (err) {
         return console.error(err);
+      } finally {
+        listen();
       }
     }
-    
+
     listen();
     return state;
   };
-  
+
   const set = async (newState) => {
     state = newState;
-    
+
     listen();
-    
+
     if (options?.persist) {
       try {
         await writeFile(path, JSON.stringify(state), {});
@@ -46,7 +46,7 @@ const createState: CreateState = (statePayload, options) => {
       }
     }
   };
-  
+
   const listen = (cb?) => {
     return cb && cb(state);
   };
