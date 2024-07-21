@@ -1,0 +1,75 @@
+---
+import { authStore } from '@stores/auth';
+
+interface Props {
+  action: "like" | "comment";
+  payload: {
+    to: string;
+    from: string;
+  };
+  length: number;
+}
+
+const { length, payload } = Astro.props;
+
+const { userLogged } = await authStore.get()
+
+const hasLiked = payload?.from === userLogged._id
+---
+
+<button class="action-btn" data-payload={JSON.stringify(Astro.props)} style={hasLiked && 'color: #fff; background-color: var(--color_accent);'}>
+  <slot name="icon" />
+  <span class="likes">{length}</span>
+</button>
+
+<script>
+  const $btn = document.querySelector(".action-btn");
+  const $likesContainer = document.querySelector('.likes') as HTMLElement;
+  const dataParsed = JSON.parse($btn.getAttribute("data-payload"));
+
+  async function sendLike() {
+    const likesLength = dataParsed?.length
+    try {
+      const res = await fetch(
+        `http://localhost:4321/api/post-actions?type=${dataParsed?.action}&from=${dataParsed?.payload?.from}&to=${dataParsed.payload?.to}`,
+        {
+          method: "POST",
+        }
+      );
+      if (!res.ok) return
+      
+      const data = await res.json()
+
+      const hasLiked = data?.post?.likes?.find(id => dataParsed?.payload?.from === id )
+
+      if (hasLiked) {
+        $likesContainer.style.color = 'var(--color_accent)'
+        $likesContainer.style.backgroundColor = 'var(--color_accent)'
+      }
+      const updatedlikesLength = data?.post?.likes?.length
+
+    } catch (e) {}
+  }
+  $btn.addEventListener("click", sendLike);
+</script>
+
+<style>
+  .action-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    border-radius: 100%;
+    cursor: pointer;
+    transition:
+      color 0.2s ease-in,
+      text-shadow 0.2s ease,
+      transform 0.2s ease-out;
+    &:hover {
+      color: var(--color_accent);
+      text-shadow: 0 0 20px var(--color_accent_light);
+    }
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+</style>
