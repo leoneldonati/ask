@@ -1,34 +1,63 @@
 ---
-import { authStore } from '@stores/auth';
+import { authStore } from "@stores/auth";
+const { userLogged } = await authStore.get();
 
 interface Props {
   action: "like" | "comment";
   payload: {
     to: string;
     from: string;
+    likes?: string[];
+    comments?: any;
+    ownerName: string;
   };
   length: number;
 }
 
-const { length, payload } = Astro.props;
+const { length, payload, action } = Astro.props;
 
-const { userLogged } = await authStore.get()
+const hasLiked =
+  action === "like" && payload.likes?.find((like) => like === userLogged?._id);
+const hasCommented =
+  action === "comment" &&
+  payload.comments?.find((comment) => comment?.owner?._id === userLogged?._id);
 
-const hasLiked = payload?.from === userLogged._id
+function handleStyles() {
+  if (action === "comment" && hasCommented) return "";
+
+  if (action === "like" && hasLiked)
+    return "color: #fff; background: linear-gradient(to top, var(--color_accent), var(--color_accent_light)); box-shadow: 0 5px 2px var(--color_accent_light);";
+}
+function handleTitle() {
+  if (action === "comment") {
+    return hasCommented
+      ? "You has commented this!"
+      : `Share with ${payload?.ownerName}!`;
+  }
+
+  if (action === "like") {
+    return hasLiked ? "Liked!" : "Like this post!";
+  }
+}
 ---
 
-<button class="action-btn" data-payload={JSON.stringify(Astro.props)} style={hasLiked && 'color: #fff; background-color: var(--color_accent);'}>
+<button
+  class="action-btn"
+  data-payload={JSON.stringify(Astro.props)}
+  style={handleStyles()}
+  title={handleTitle()}
+>
   <slot name="icon" />
   <span class="likes">{length}</span>
 </button>
 
 <script>
   const $btn = document.querySelector(".action-btn");
-  const $likesContainer = document.querySelector('.likes') as HTMLElement;
+  const $likesContainer = document.querySelector(".likes") as HTMLElement;
   const dataParsed = JSON.parse($btn.getAttribute("data-payload"));
 
   async function sendLike() {
-    const likesLength = dataParsed?.length
+    const likesLength = dataParsed?.length;
     try {
       const res = await fetch(
         `http://localhost:4321/api/post-actions?type=${dataParsed?.action}&from=${dataParsed?.payload?.from}&to=${dataParsed.payload?.to}`,
@@ -36,18 +65,19 @@ const hasLiked = payload?.from === userLogged._id
           method: "POST",
         }
       );
-      if (!res.ok) return
-      
-      const data = await res.json()
+      if (!res.ok) return;
 
-      const hasLiked = data?.post?.likes?.find(id => dataParsed?.payload?.from === id )
+      const data = await res.json();
+
+      const hasLiked = data?.post?.likes?.find(
+        (id) => dataParsed?.payload?.from === id
+      );
 
       if (hasLiked) {
-        $likesContainer.style.color = 'var(--color_accent)'
-        $likesContainer.style.backgroundColor = 'var(--color_accent)'
+        $likesContainer.style.color = "#fff";
+        $likesContainer.style.backgroundColor = "var(--color_accent)";
       }
-      const updatedlikesLength = data?.post?.likes?.length
-
+      const updatedlikesLength = data?.post?.likes?.length;
     } catch (e) {}
   }
   $btn.addEventListener("click", sendLike);
@@ -57,8 +87,9 @@ const hasLiked = payload?.from === userLogged._id
   .action-btn {
     background: none;
     border: none;
-    padding: 4px;
-    border-radius: 100%;
+    padding: 3px 6px;
+    border-top-left-radius: 20%;
+    border-top-right-radius: 20%;
     cursor: pointer;
     transition:
       color 0.2s ease-in,
