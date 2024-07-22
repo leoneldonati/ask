@@ -1,4 +1,4 @@
-import { readFile, writeFile } from "fs/promises";
+import { readFile, writeFile, mkdir } from "fs/promises";
 type CreateState = <State>(
   statePayload: State,
   options?: { persist: boolean }
@@ -12,6 +12,7 @@ const createState: CreateState = (state, options) => {
   const id = crypto.randomUUID()
   const path = `./src/state-js/state-${id}.txt`;
 
+  mkdir('./src/state-js').then(() => {})
   if (options?.persist) {
     writeFile(path, JSON.stringify(state), {}).then(() => {});
   }
