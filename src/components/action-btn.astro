@@ -22,12 +22,15 @@ const hasCommented =
   action === "comment" &&
   payload.comments?.find((comment) => comment?.owner?._id === userLogged?._id);
 
+// MANEJAR ESTILOS DEL BOTON
 function handleStyles() {
   if (action === "comment" && hasCommented) return "";
 
   if (action === "like" && hasLiked)
     return "color: #fff; background: linear-gradient(to top, var(--color_accent), var(--color_accent_light)); box-shadow: 0 5px 2px var(--color_accent_light);";
 }
+
+// MANEJAR CAMBIO DE TITULO DEL BOTON
 function handleTitle() {
   if (action === "comment") {
     return hasCommented
@@ -41,23 +44,37 @@ function handleTitle() {
 }
 ---
 
-<button
-  class="action-btn"
-  data-payload={JSON.stringify(Astro.props)}
-  style={handleStyles()}
-  title={handleTitle()}
->
-  <slot name="icon" />
-  <span class="likes">{length}</span>
-</button>
+{
+  action === "comment" ? (
+    <a
+      href={`/post/comment?from=${userLogged?._id}&to=${payload?.to}`}
+      class="action-btn"
+      data-payload={JSON.stringify(Astro.props)}
+      style={handleStyles()}
+      title={handleTitle()}
+    >
+      <slot name="icon" />
+      <span class="likes">{length}</span>
+    </a>
+  ) : (
+    <button
+      class="action-btn"
+      data-payload={JSON.stringify(Astro.props)}
+      style={handleStyles()}
+      title={handleTitle()}
+    >
+      <slot name="icon" />
+      <span class="likes">{length}</span>
+    </button>
+  )
+}
 
 <script>
-  const $btn = document.querySelector(".action-btn");
+  const $btn = document.querySelector(".action-btn") as HTMLButtonElement;
   const $likesContainer = document.querySelector(".likes") as HTMLElement;
   const dataParsed = JSON.parse($btn.getAttribute("data-payload"));
 
   async function sendLike() {
-    const likesLength = dataParsed?.length;
     try {
       const res = await fetch(
         `http://localhost:4321/api/post-actions?type=${dataParsed?.action}&from=${dataParsed?.payload?.from}&to=${dataParsed.payload?.to}`,
@@ -74,10 +91,24 @@ function handleTitle() {
       );
 
       if (hasLiked) {
-        $likesContainer.style.color = "#fff";
-        $likesContainer.style.backgroundColor = "var(--color_accent)";
+        $btn.style.color = "#fff";
+        $btn.style.background =
+          "linear-gradient(to top, var(--color_accent), var(--color_accent_light))";
+        $btn.style.boxShadow = "0 5px 2px var(--color_accent_light)";
+        $btn.setAttribute("title", "Liked!");
+        const updatedlikesLength = data?.post?.likes?.length;
+
+        $likesContainer.innerText = updatedlikesLength?.toString();
+        return;
       }
+      $btn.style.color = "";
+      $btn.style.background = "";
+      $btn.style.boxShadow = "";
+      $btn.setAttribute("title", "Like this post!");
+
       const updatedlikesLength = data?.post?.likes?.length;
+
+      $likesContainer.innerText = updatedlikesLength?.toString();
     } catch (e) {}
   }
   $btn.addEventListener("click", sendLike);
@@ -93,11 +124,10 @@ function handleTitle() {
     cursor: pointer;
     transition:
       color 0.2s ease-in,
-      text-shadow 0.2s ease,
-      transform 0.2s ease-out;
+      transform 0.2s ease-out,
+      box-shadow 0.2s ease;
     &:hover {
-      color: var(--color_accent);
-      text-shadow: 0 0 20px var(--color_accent_light);
+      transform: scale(1.02);
     }
     &:active {
       transform: scale(0.95);
