@@ -1,0 +1,60 @@
+---
+import Layout from "@layout";
+import PostCard from "@components/post-card.astro";
+import CommentCard from "@components/comment-card.astro";
+import InputComment from "@components/input-comment.astro"
+const params = new URL(Astro.url).searchParams;
+const from = params.get("from");
+const to = params.get("to");
+
+async function getPost() {
+  try {
+    const res = await fetch(`http://localhost:4321/api/get-post-by?id=${to}`);
+
+    if (res.ok) {
+      const data = await res.json();
+
+      return data;
+    }
+  } catch (e) {}
+}
+const post = (await getPost().catch((err) => {
+  console.log(err);
+})) as Post;
+
+console.log({ from, to, post });
+---
+
+<Layout>
+  <section class="comment">
+    <div class="comment__container">
+      <PostCard post={post} />
+
+      {post.comments?.map((comment) => <CommentCard comment={comment} />)}
+
+      <InputComment name={post?.userOwner?.name} />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .comment {
+
+  }
+  .comment__container {
+    position: relative;
+    flex: 1;
+    max-width: calc(var(--max_w) - 200px);
+    width: 100%;
+    height: 100dvh;
+    margin: 0 auto;
+    overflow-y: auto;
+    border-left: 1px solid var(--color_secondary);
+    border-right: 1px solid var(--color_secondary);
+    text-align: center;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+</style>
