@@ -19,7 +19,7 @@ if (id === userId) return Astro.redirect("/profile");
 
 const headers = new Headers();
 headers.append("Cookie", `session=${Astro.cookies.get("session")?.value}`);
-const res = await fetch(`http://localhost:4321/api/users/${id}`, { headers });
+const res = await fetch(`${Astro.url.origin}/api/users/${id}`, { headers });
 
 if (!res.ok) return Astro.redirect("/");
 

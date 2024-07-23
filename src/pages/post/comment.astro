@@ -9,7 +9,7 @@ const to = params.get("to");
 
 async function getPost() {
   try {
-    const res = await fetch(`http://localhost:4321/api/get-post-by?id=${to}`);
+    const res = await fetch(`${Astro.url.origin}/api/get-post-by?id=${to}`);
 
     if (res.ok) {
       const data = await res.json();

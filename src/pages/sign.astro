@@ -8,7 +8,7 @@ if (Astro.request.method === "POST") {
   try {
     const form = await Astro.request.formData();
 
-    const res = await fetch("http://localhost:4321/api/sign", {
+    const res = await fetch(`${Astro.url.origin}/api/sign`, {
       method: "POST",
       body: form,
     });

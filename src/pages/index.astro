@@ -4,7 +4,7 @@ import { authStore } from "@stores/auth";
 import PostCard from "@components/post-card.astro";
 import Header from "@components/header.astro";
 import BubblePlus from "@icons/bubble-plus.astro";
-import { getPosts } from "@services/api";
+import ApiFn from "@services/api";
 import IconLeft from "@icons/toggle-left.astro";
 
 if (!Astro.cookies.get("session")) {
@@ -17,10 +17,11 @@ if (!Astro.cookies.get("session")) {
 
 const { userLogged } = await authStore.get();
 
-const posts = await getPosts(15).catch((err) => {
+const posts = await ApiFn(Astro.url.origin).getPosts(15).catch((err) => {
   console.log(err);
   return [];
 });
+
 ---
 
 <Layout page="Home" description="">

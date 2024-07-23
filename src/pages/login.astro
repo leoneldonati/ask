@@ -8,7 +8,7 @@ import BrandInstagram from "../icons/brand-instagram.astro";
 if (Astro.request.method === "POST") {
   try {
     const formData = await Astro.request.formData();
-    const res = await fetch(`http://localhost:4321/api/login-user`, {
+    const res = await fetch(`${Astro.url.origin}/api/login-user`, {
       method: "post",
       body: formData,
     });

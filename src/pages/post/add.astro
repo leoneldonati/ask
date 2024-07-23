@@ -11,7 +11,7 @@ if (Astro.request.method === "POST") {
     .formData()
     .catch((e) => console.log(e))) as FormData;
   form.append("userId", userLogged?._id);
-  return fetch("http://localhost:4321/api/add-post", {
+  return fetch(`${Astro.url.origin}/api/add-post`, {
     method: "POST",
     body: form,
   })
