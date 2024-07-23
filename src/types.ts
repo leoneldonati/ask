@@ -21,6 +21,8 @@ interface PostComment {
   owner: UserLogged;
   content: string;
   _id: string;
+  createdAt: string;
+  
 }
 interface Post {
   _id: string;
