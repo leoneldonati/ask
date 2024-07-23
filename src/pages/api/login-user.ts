@@ -29,7 +29,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const user = result;
 
-    const { ok, error } = await compare(user.hash, password);
+    const { ok } = await compare(user.hash, password);
 
     if (!ok)
       return resJson(
