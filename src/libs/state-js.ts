@@ -1,4 +1,3 @@
-import { readFile, writeFile, mkdir } from "fs/promises";
 type CreateState = <State>(
   statePayload: State,
   options?: { persist: boolean }
@@ -8,27 +7,8 @@ type CreateState = <State>(
   listen: (cb: (state: State) => void) => void;
 };
 
-const createState: CreateState = (state, options) => {
-  const id = crypto.randomUUID()
-  const path = `./src/state-js/state-${id}.txt`;
-
-  if (options?.persist) {
-    writeFile(path, JSON.stringify(state), {}).then(() => {});
-  }
-
+const createState: CreateState = (state) => {
   const get = async () => {
-    if (options?.persist) {
-      try {
-        const savedState = await readFile(path, "utf8");
-
-        return JSON.parse(savedState);
-      } catch (err) {
-        return console.error(err);
-      } finally {
-        listen();
-      }
-    }
-
     listen();
     return state;
   };
@@ -37,14 +17,6 @@ const createState: CreateState = (state, options) => {
     state = newState;
 
     listen();
-
-    if (options?.persist) {
-      try {
-        await writeFile(path, JSON.stringify(state), {});
-      } catch (e) {
-        console.log(e);
-      }
-    }
   };
 
   const listen = (cb?) => {
