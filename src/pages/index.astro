@@ -8,7 +8,7 @@ import ApiFn from "@services/api";
 import IconLeft from "@icons/toggle-left.astro";
 
 if (!Astro.cookies.get("session")) {
-  console.log(Astro.cookies.get('cookie'))
+  console.log(Astro.cookies.get('cookie'), '/')
   await authStore.set({
     userLogged: null,
     errors: { message: "Session expired!" },

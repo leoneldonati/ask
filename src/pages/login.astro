@@ -16,7 +16,7 @@ if (Astro.request.method === "POST") {
     if (res.ok) {
       const sessionString = res.headers.get("cookie")?.split("=")[0];
 
-      console.log(sessionString)
+      console.log(sessionString, '/login')
       const ONE_HOUR = 3600000;
       Astro.cookies.set("session", sessionString ?? "", {
         expires: new Date(Date.now() + ONE_HOUR),
