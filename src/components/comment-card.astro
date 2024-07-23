@@ -1,0 +1,22 @@
+---
+import PostHeaderTop from "./post-header-top.astro";
+
+interface Props {
+  comment: PostComment;
+}
+
+const { comment } = Astro.props;
+---
+
+<article class="comment__card">
+  <PostHeaderTop
+    name={comment.owner.name}
+    id={comment.owner._id}
+    username={comment.owner.username}
+    content={comment.content}
+    createdAt={comment.createdAt}
+  />
+  <p class="comment__card__p">
+    {comment?.content}
+  </p>
+</article>

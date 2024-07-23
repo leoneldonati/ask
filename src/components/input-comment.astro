@@ -1,0 +1,59 @@
+---
+interface Props {
+  name: string;
+}
+
+const { name } = Astro.props;
+---
+
+<form class="input__comment__form" method="post">
+  <input
+    autofocus
+    required
+    placeholder={`Share what you are thinking with ${name}!`}
+    type="text"
+    name="content-comment"
+    id="content-comment"
+  />
+
+  <button> Share! </button>
+</form>
+
+<style>
+  .input__comment__form {
+    position: sticky;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    align-items: center;
+    bottom: 0;
+    width: 100%;
+    height: 100px;
+    padding: var(--padding_boxes);
+    gap: 16px;
+    backdrop-filter: blur(1em);
+    background-color: rgba(233, 233, 233, 0.3);
+    box-shadow: 0 10px 10px var(--color_secondary);
+
+    & > input {
+      width: 100%;
+      height: 70%;
+      border-radius: var(--border_size);
+    }
+    & > button {
+      padding: 10px 20px;
+      background-color: var(--color_accent_light);
+      border: 3px solid var(--color_accent);
+      border-radius: var(--border_size);
+      cursor: pointer;
+      transition: box-shadow 0.2s ease-in-out;
+
+      &:hover {
+        box-shadow: 0 5px 4px var(--color_accent_light);
+      }
+      &:active {
+        box-shadow: 0 4px 4px var(--color_accent_light);
+      }
+    }
+  }
+</style>
