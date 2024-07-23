@@ -2,8 +2,7 @@
 import Layout from "@layout";
 import { authStore } from "@stores/auth";
 import PostCard from "@components/post-card.astro";
-import IconSearch from "@icons/search.astro";
-import IconUser from "@icons/user.astro";
+import Header from "@components/header.astro";
 import BubblePlus from "@icons/bubble-plus.astro";
 import { getPosts } from "@services/api";
 import IconLeft from "@icons/toggle-left.astro";
@@ -18,8 +17,6 @@ if (!Astro.cookies.get("session")) {
 
 const { userLogged } = await authStore.get();
 
-const avatarSrc = userLogged?.avatar[0].secureUrl;
-
 const posts = await getPosts(15).catch((err) => {
   console.log(err);
   return [];
@@ -28,32 +25,7 @@ const posts = await getPosts(15).catch((err) => {
 
 <Layout page="Home" description="">
   <section class="home">
-    <header class="home__header">
-      <h1 class="home__header__h1" transition:name="ask">Ask!</h1>
-
-      <ul class="home__header__ul">
-        <li>
-          <a class="home__header__btn" href="/search">
-            <IconSearch /> Search
-          </a>
-        </li>
-        <li>
-          <a class="home__header__btn" href="/profile">
-            <IconUser /> Profile
-          </a>
-        </li>
-      </ul>
-
-      <button class="home__header__btn--session" title="Close session?">
-        <img
-          src={avatarSrc}
-          alt={userLogged?.name}
-          loading="lazy"
-          class="home__header_avatar"
-          transition:name="avatar"
-        />
-      </button>
-    </header>
+    <Header />
 
     <div class="home__container">
       <ul>
@@ -126,65 +98,7 @@ const posts = await getPosts(15).catch((err) => {
     display: flex;
     flex-flow: column;
   }
-  .home__header {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    padding: 4px 6px;
-    border-bottom: 1px solid var(--color_secondary);
-    border-radius: var(--padding_boxes);
-  }
-  .home__header__h1 {
-    color: var(--color_accent);
-    pointer-events: none;
-  }
-  .home__header__ul {
-    flex: 1;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-  }
-  .home__header__btn {
-    color: var(--color_secondary_text);
-    display: flex;
-    align-items: self-end;
-    gap: 2px;
-    box-shadow: 0 0 0 transparent;
-    border-radius: var(--border_size);
-    padding: 2px;
-    transition: box-shadow 0.1s ease-in-out;
-    &:hover {
-      box-shadow: 0 4px 2px var(--color_secondary);
-    }
-    &:active {
-      box-shadow: 0 2px 2px var(--color_secondary);
-    }
-  }
-  .home__header__btn--session {
-    display: flex;
-    background: none;
-    border: 1px solid var(--color_accent_light);
-    border-radius: 100%;
-    overflow: hidden;
-    cursor: pointer;
-    box-shadow: 0 0 5px var(--color_accent);
-    transition: box-shadow 0.2s ease-in;
-
-    &:hover {
-      box-shadow: 0 4px 5px var(--color_accent);
-    }
-    &:active {
-      box-shadow: 0 1px 5px var(--color_accent);
-    }
-
-    & > img {
-      aspect-ratio: 4 / 4;
-      object-fit: cover;
-      object-position: center;
-    }
-  }
+  
   .home__container {
     display: flex;
   }

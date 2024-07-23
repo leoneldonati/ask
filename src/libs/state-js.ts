@@ -12,7 +12,6 @@ const createState: CreateState = (state, options) => {
   const id = crypto.randomUUID()
   const path = `./src/state-js/state-${id}.txt`;
 
-  mkdir('./src/state-js').then(() => {})
   if (options?.persist) {
     writeFile(path, JSON.stringify(state), {}).then(() => {});
   }

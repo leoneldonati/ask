@@ -1,13 +1,11 @@
 ---
-import IconPoint from "@icons/point.astro";
-import { parseDate } from "../helpers/date";
 import Carrousell from "./carrousell.astro";
 import PostImage from "./post-image.astro";
 import Heart from "@icons/heart.astro";
-import CommentIcon from "@icons/comment.astro";
 import { authStore } from "@stores/auth";
 import ActionBtn from "./action-btn.astro";
 import Comment from "@icons/comment.astro";
+import PostHeaderTop from "./post-header-top.astro";
 interface Props {
   post: Post;
 }
@@ -23,26 +21,16 @@ const imagesPaths = post?.images?.map((path) => path.secureUrl);
 
 const hasMultipleImages = imagesPaths.length > 1;
 const hasImages = post?.images.length !== 0;
-const longerContent = post.content.length > 200;
 ---
 
 <article class="post">
-  <div class="post__container">
-    <h2 class="post__h2">
-      {user?.name}
-      <IconPoint />
-      <a href={`/users/${user._id}`}>@{user?.username}</a>
-      <IconPoint />
-
-      <span>
-        {parseDate(post.createdAt)}
-      </span>
-    </h2>
-    <p class="post__content ocult">
-      {post?.content}
-    </p>
-    {longerContent && <button class="post__content__btn">More...</button>}
-  </div>
+  <PostHeaderTop
+    name={user.name}
+    id={user._id}
+    createdAt={post.createdAt}
+    username={post.userOwner.username}
+    content={post.content}
+  />
 
   <div class="post__container--images">
     {
@@ -72,8 +60,11 @@ const longerContent = post.content.length > 200;
     <ActionBtn
       length={post?.likes?.length}
       payload={{
-        from: user._id,
-        to: post._id
+        from: userLogged?._id,
+        to: post._id,
+        likes: post.likes,
+
+        ownerName: user?.name,
       }}
       action="like"
     >
@@ -82,16 +73,17 @@ const longerContent = post.content.length > 200;
     <ActionBtn
       length={post?.comments?.length}
       payload={{
-        from: user._id,
-        to: post._id
+        from: userLogged?._id,
+        to: post._id,
+        comments: post?.comments,
+        ownerName: user?.name,
       }}
       action="comment"
     >
-      <Comment slot="icon"/>
+      <Comment slot="icon" />
     </ActionBtn>
   </div>
 </article>
-
 
 <style>
   .post {
@@ -107,14 +99,7 @@ const longerContent = post.content.length > 200;
     padding: var(--padding_boxes) 8px;
     width: 100%;
   }
-  .post__container {
-    grid-area: info;
-    max-width: 89%;
-    width: 100%;
-    display: flex;
-    flex-flow: column;
-    gap: 6px;
-  }
+
   .post__container--actions-btn {
     grid-area: buttons;
     width: 100%;
@@ -125,40 +110,11 @@ const longerContent = post.content.length > 200;
     display: flex;
     justify-content: space-around;
     align-items: center;
-
   }
   .post__container--images {
     grid-area: images;
   }
-  .post__h2 {
-    display: flex;
-    align-items: center;
-    font-size: large;
 
-    & > svg {
-      color: var(--color_secondary);
-    }
-    & > a,
-    & > span {
-      color: var(--color_secondary_text);
-      font-size: small;
-      font-style: italic;
-    }
-  }
-  .post__content {
-    overflow: hidden;
-    text-align: left;
-    max-width: 55ch;
-  }
-  .ocult {
-    max-height: 200px;
-  }
-  .post__content__btn {
-    color: var(--color_accent);
-    position: absolute;
-    bottom: 2%;
-    right: 2%;
-  }
   .post__image {
     aspect-ratio: 16 / 9;
     object-fit: cover;
