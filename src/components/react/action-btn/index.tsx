@@ -1,5 +1,4 @@
 import "./index.css";
-import { authStore } from "@stores/auth";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -9,6 +8,7 @@ type Props = {
     from: string;
     likes?: string[];
     comments?: any;
+    userLogged: UserLogged;
     ownerName: string;
   };
   length: number;
@@ -16,19 +16,18 @@ type Props = {
 };
 export default function ActionBtn(props: Props) {
   const { action, length: initialLength, payload } = props;
-  const { get } = authStore
+
   const [styles, setStyles] = useState({});
   const [length, setLength] = useState(initialLength);
   const [title, setTitle] = useState("");
   // VERIFICAR SI EL USUARIO LOGEADO YA INTERACTUO CON EL POST
   const hasLiked =
-    action === "like" &&
-    payload.likes?.find((like) => like === get().userLogged?._id);
+    payload.likes?.find((id) => id === payload.userLogged?._id) !== undefined;
   const hasCommented =
     action === "comment" &&
     payload.comments?.find(
-      (comment) => comment?.owner?._id === get().userLogged?._id
-    );
+      (comment) => comment?.owner?._id === payload.userLogged?._id
+    ) !== undefined;
 
   // MANEJAR ESTILOS DEL BOTON
   function handleStyles() {
@@ -95,7 +94,7 @@ export default function ActionBtn(props: Props) {
     <>
       {action === "comment" ? (
         <a
-          href={`/post/comment?from=${get().userLogged?._id}&to=${payload?.to}`}
+          href={`/post/comment?from=${payload.userLogged?._id}&to=${payload?.to}`}
           className="action-btn"
           style={styles}
           title={title}

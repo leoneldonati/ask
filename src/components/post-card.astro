@@ -64,6 +64,7 @@ const hasImages = post?.images.length !== 0;
         to: post._id,
         likes: post.likes,
         ownerName: user?.name,
+        userLogged
       }}
       action="like"
       client:visible
@@ -77,9 +78,9 @@ const hasImages = post?.images.length !== 0;
         to: post._id,
         comments: post?.comments,
         ownerName: user?.name,
+        userLogged
       }}
       action="comment"
-      client:visible
     >
       <Comment />
     </ActionBtn>
