@@ -2,18 +2,18 @@ type CreateState = <State>(
   statePayload: State,
   options?: { persist: boolean }
 ) => {
-  get: () => Promise<State>;
-  set: (newState: State) => Promise<void>;
+  get: () => State;
+  set: (newState: State) => void;
   listen: (cb: (state: State) => void) => void;
 };
 
 const createState: CreateState = (state) => {
-  const get = async () => {
+  const get =  () => {
     listen();
     return state;
   };
 
-  const set = async (newState) => {
+  const set =  (newState) => {
     state = newState;
 
     listen();
