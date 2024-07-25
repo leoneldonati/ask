@@ -3,7 +3,7 @@ import Carrousell from "./carrousell.astro";
 import PostImage from "./post-image.astro";
 import Heart from "@icons/heart.astro";
 import { authStore } from "@stores/auth";
-import ActionBtn from "./action-btn.astro";
+import ActionBtn from "./react/action-btn";
 import Comment from "@icons/comment.astro";
 import PostHeaderTop from "./post-header-top.astro";
 interface Props {
@@ -63,12 +63,12 @@ const hasImages = post?.images.length !== 0;
         from: userLogged?._id,
         to: post._id,
         likes: post.likes,
-
         ownerName: user?.name,
       }}
       action="like"
+      client:visible
     >
-      <Heart slot="icon" />
+      <Heart />
     </ActionBtn>
     <ActionBtn
       length={post?.comments?.length}
@@ -79,8 +79,9 @@ const hasImages = post?.images.length !== 0;
         ownerName: user?.name,
       }}
       action="comment"
+      client:visible
     >
-      <Comment slot="icon" />
+      <Comment />
     </ActionBtn>
   </div>
 </article>
