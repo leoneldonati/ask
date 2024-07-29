@@ -7,6 +7,7 @@ export default function AvatarSelector() {
     const src = URL.createObjectURL(e.target.files[0]);
     setSelectedAvatar(src);
   };
+
   return (
     <label
       htmlFor="avatar"
@@ -24,7 +25,7 @@ export default function AvatarSelector() {
 
       <img
         src={selectedAvatar}
-        hidden
+        hidden={selectedAvatar === ''}
         className="sign__label--avatar selected-avatar"
         loading="lazy"
       />
