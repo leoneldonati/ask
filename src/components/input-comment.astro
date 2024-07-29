@@ -13,7 +13,7 @@ const { name, payload, userLogged } = Astro.props;
 if (Astro.request.method === 'POST') {
   const form = await Astro.request.formData()
   const content = form.get('content-comment')?.toString()
-  fetch(`${Astro.url.origin}/api/post-actions?type=comment&from=${payload.from}&to=${payload.to}`, {
+  await fetch(`${Astro.url.origin}/api/post-actions?type=comment&from=${payload.from}&to=${payload.to}`, {
     method: 'POST',
     body: JSON.stringify({
       owner: userLogged,
@@ -23,11 +23,6 @@ if (Astro.request.method === 'POST') {
       'Content-Type': 'application/json'
     }
   })
-    .then(res => {
-      return res.json()
-    })
-    .then(data => console.log(data))
-    .catch(err => console.log(err))
 }
 ---
 
@@ -41,7 +36,7 @@ if (Astro.request.method === 'POST') {
     id="content-comment"
   />
 
-  <button> Share! </button>
+  <button type="submit"> Share! </button>
 </form>
 
 <style>
