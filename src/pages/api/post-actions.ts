@@ -1,4 +1,4 @@
-import { postsModel } from "@db";
+import { postsModel, usersModel } from "@db";
 import { resJson } from "@helpers/response";
 import { postsStore } from "@stores/posts";
 import type { APIRoute } from "astro";
@@ -11,11 +11,6 @@ export const POST: APIRoute = async ({ request }) => {
   const from = params.get("from");
   const to = params.get("to");
 
-  console.log({
-    type,
-    from,
-    to,
-  });
   try {
     const post = await postsModel.findOne({ _id: new ObjectId(to) });
 
@@ -45,7 +40,6 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (type === "comment") {
       const payload = await request.json();
-
       if (payload.content === "")
         return resJson({ message: "The comment is empty!" }, { status: 400 });
 
@@ -59,8 +53,9 @@ export const POST: APIRoute = async ({ request }) => {
         { $push: { comments: comment as never } },
         { returnDocument: "after" }
       );
-      console.log(updatedPost)
-      return resJson({ message: `Comment sent to ${updatedPost.userOwner.name}` });
+      return resJson({
+        message: `Comment sent to ${updatedPost.userOwner.name}`,
+      });
     }
   } catch (e) {
     return resJson({ message: "Error on server." }, { status: 500 });
