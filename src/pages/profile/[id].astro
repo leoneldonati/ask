@@ -1,5 +1,5 @@
 ---
-import AvatarSelector from "@components/avatar-selector.astro";
+import AvatarSelector from "@components/react/avatar-selector";
 import Layout from "../../layouts/Layout.astro";
 import { authStore } from "../../stores/auth";
 
@@ -18,7 +18,7 @@ const lastname = userLogged.name.split(" ")[1];
 <Layout page="Edit your profile." description="">
   <section class="edit">
     <form class="edit__form" method="post" enctype="multipart/form-data">
-      <AvatarSelector />
+      <AvatarSelector client:visible />
       <div class="edit__container--names">
         <label for="name" class="edit__label">
           <span> Name </span>
