@@ -5,6 +5,7 @@
   border-top-left-radius: 20%;
   border-top-right-radius: 20%;
   cursor: pointer;
+  color: inherit;
   transition:
     color 0.2s ease-in,
     transform 0.2s ease-out,
