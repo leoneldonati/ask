@@ -1,6 +1,5 @@
-import { usersModel } from "@db";
+import { postsModel } from "@db";
 import type { APIRoute } from "astro";
-import { ObjectId } from "mongodb";
 import { resJson } from "src/helpers/response";
 
 export const GET: APIRoute = async ({ request }) => {
@@ -15,9 +14,8 @@ export const GET: APIRoute = async ({ request }) => {
     );
 
   try {
-    const result = await usersModel.findOne({ _id: new ObjectId(userId)})
-
-    return resJson(result?.posts);
+    const result = await postsModel.find({ userId }).toArray()
+    return resJson(result);
   } catch (e) {
     return resJson({ message: "Error on server" }, { status: 500 });
   }

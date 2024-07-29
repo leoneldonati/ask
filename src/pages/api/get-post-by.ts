@@ -15,7 +15,6 @@ export const GET: APIRoute = async ({request}) => {
 
     if (!post) return resJson({ message: 'This post not exists!' }, { status: 404 })
     
-    
     return resJson(post)
   }
   catch (e) {
