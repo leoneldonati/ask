@@ -8,21 +8,22 @@ import ApiFn from "@services/api";
 import IconLeft from "@icons/toggle-left.astro";
 
 if (!Astro.cookies.get("session")) {
-  console.log(Astro.cookies.get('cookie'), '/')
-  await authStore.set({
+  console.log(Astro.cookies.get("cookie"), "/");
+  authStore.set({
     userLogged: null,
     errors: { message: "Session expired!" },
   });
   return Astro.redirect("/login");
 }
 
-const { userLogged } = await authStore.get();
+const { userLogged } = authStore.get();
 
-const posts = await ApiFn(Astro.url.origin).getPosts(15).catch((err) => {
-  console.log(err);
-  return [];
-});
-
+const posts = await ApiFn(Astro.url.origin)
+  .getPosts(15)
+  .catch((err) => {
+    console.log(err);
+    return [];
+  });
 ---
 
 <Layout page="Home" description="">
@@ -100,7 +101,7 @@ const posts = await ApiFn(Astro.url.origin).getPosts(15).catch((err) => {
     display: flex;
     flex-flow: column;
   }
-  
+
   .home__container {
     display: flex;
   }
