@@ -9,37 +9,32 @@ interface Props {
   username: string;
   content: string;
 }
-const {
-  content,
-  createdAt,
-  id,
-  name,
-  username
-} = Astro.props
+const { content, createdAt, id, name, username } = Astro.props;
 const longerContent = content.length > 200;
-
 ---
-<div class="post__container">
-  <h2 class="post__h2">
-    {name}
-    <IconPoint />
-    <a href={`/users/${id}`}>@{username}</a>
-    <IconPoint />
 
-    <span>
-      {parseDate(createdAt)}
-    </span>
-  </h2>
-  <p class="post__content ocult">
-    {content}
-  </p>
-  {longerContent && <button class="post__content__btn">More...</button>}
+<div class="post__container">
+  <div>
+    <h2 class="post__h2">
+      {name}
+      <IconPoint />
+      <a href={`/users/${id}`}>@{username}</a>
+      <IconPoint />
+
+      <span>
+        {parseDate(createdAt)}
+      </span>
+    </h2>
+    <p class="post__content ocult">
+      {content}
+    </p>
+    {longerContent && <button class="post__content__btn">More...</button>}
+  </div>
 </div>
 
 <style>
   .post__container {
     grid-area: info;
-    max-width: 89%;
     width: 100%;
     display: flex;
     flex-flow: column;
