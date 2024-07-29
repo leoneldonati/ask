@@ -11,25 +11,26 @@ interface Props {
 }
 
 const { userLogged } = await authStore.get();
-
 const { post } = Astro.props;
 
-const user = post.userOwner;
+const user = post?.userOwner;
 
-const avatar = user.avatar[0].secureUrl;
+const avatar = user?.avatar[0]?.secureUrl;
 const imagesPaths = post?.images?.map((path) => path.secureUrl);
 
-const hasMultipleImages = imagesPaths.length > 1;
+const hasMultipleImages = imagesPaths?.length > 1;
 const hasImages = post?.images.length !== 0;
+
+console.log(post)
 ---
 
 <article class="post">
   <PostHeaderTop
-    name={user.name}
-    id={user._id}
-    createdAt={post.createdAt}
-    username={post.userOwner.username}
-    content={post.content}
+    name={user?.name}
+    id={user?._id}
+    createdAt={post?.createdAt}
+    username={post?.userOwner.username}
+    content={post?.content}
   />
 
   <div class="post__container--images">
@@ -50,7 +51,7 @@ const hasImages = post?.images.length !== 0;
   >
     <img
       src={avatar ?? ""}
-      alt={user.name}
+      alt={user?.name}
       class="post__btn__avatar"
       loading="lazy"
     />
@@ -61,8 +62,8 @@ const hasImages = post?.images.length !== 0;
       length={post?.likes?.length}
       payload={{
         from: userLogged?._id,
-        to: post._id,
-        likes: post.likes,
+        to: post?._id,
+        likes: post?.likes,
         ownerName: user?.name,
         userLogged
       }}
@@ -75,7 +76,7 @@ const hasImages = post?.images.length !== 0;
       length={post?.comments?.length}
       payload={{
         from: userLogged?._id,
-        to: post._id,
+        to: post?._id,
         comments: post?.comments,
         ownerName: user?.name,
         userLogged

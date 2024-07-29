@@ -1,6 +1,4 @@
 ---
-import type { Sign } from "crypto";
-
 interface Props {
   name: string;
   payload: {
@@ -12,11 +10,10 @@ interface Props {
 
 const { name, payload, userLogged } = Astro.props;
 
-let message = "";
 if (Astro.request.method === "POST") {
   const form = await Astro.request.formData();
   const content = form.get("content-comment")?.toString();
-  const res = await fetch(
+  await fetch(
     `${Astro.url.origin}/api/post-actions?type=comment&from=${payload.from}&to=${payload.to}`,
     {
       method: "POST",
@@ -29,9 +26,6 @@ if (Astro.request.method === "POST") {
       },
     }
   );
-  const data = (await res.json()) as { message: string };
-
-  message = data.message;
 }
 ---
 
@@ -61,13 +55,13 @@ if (Astro.request.method === "POST") {
     padding: var(--padding_boxes);
     gap: 16px;
     backdrop-filter: blur(1em);
-    background-color: rgba(233, 233, 233, 0.3);
     box-shadow: 0 10px 10px var(--color_secondary);
 
     & > input {
       width: 100%;
-      height: 70%;
+      height: 100%;
       border-radius: var(--border_size);
+      padding: 0 0 0 6px;
     }
     & > button {
       padding: 10px 20px;
