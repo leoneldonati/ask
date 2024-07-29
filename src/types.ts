@@ -10,7 +10,10 @@ interface UserLogged {
   createdAt: Date;
   updatedAt: Date;
   settings: object;
-  location: object;
+  location: {
+    city: string;
+    country: string;
+  };
   avatar: Array<{ secureUrl: string, publicId: string }>;
   posts: Post[];
   followers: [];
