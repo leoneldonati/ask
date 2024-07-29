@@ -12,7 +12,7 @@ interface UserLogged {
   settings: object;
   location: {
     city: string;
-    country: string;
+    country_name: string;
   };
   avatar: Array<{ secureUrl: string, publicId: string }>;
   posts: Post[];
