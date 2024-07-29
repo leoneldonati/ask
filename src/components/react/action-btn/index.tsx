@@ -89,6 +89,8 @@ export default function ActionBtn(props: Props) {
   useEffect(() => {
     handleStyles();
     handleTitle();
+
+    console.log(props)
   }, []);
   return (
     <>
