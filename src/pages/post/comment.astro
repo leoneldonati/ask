@@ -14,16 +14,15 @@ async function getPost() {
 
     if (res.ok) {
       const data = await res.json();
-
       return data;
     }
-  } catch (e) {}
+  } catch (e) {
+    console.log(e);
+  }
 }
 const post = (await getPost().catch((err) => {
   console.log(err);
 })) as Post;
-
-console.log({ from, to, post });
 ---
 
 <Layout>
@@ -31,7 +30,7 @@ console.log({ from, to, post });
     <div class="comment__container">
       <PostCard post={post} />
 
-      {post.comments?.map((comment) => <CommentCard comment={comment} />)}
+      {post?.comments?.map((comment) => <CommentCard comment={comment} />)}
 
       <InputComment
         name={post?.userOwner?.name}
@@ -44,6 +43,7 @@ console.log({ from, to, post });
 
 <style>
   .comment {
+    position: relative;
   }
   .comment__container {
     position: relative;
@@ -59,7 +59,7 @@ console.log({ from, to, post });
     border-left: 1px solid var(--color_secondary);
     border-right: 1px solid var(--color_secondary);
     text-align: center;
-    
+
     &::-webkit-scrollbar {
       display: none;
     }
