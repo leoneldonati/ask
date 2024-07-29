@@ -1,26 +1,25 @@
 ---
-import { Image } from 'astro:assets';
+import { Image } from "astro:assets";
 
 interface Props {
   src: string;
   alt: string;
   ownerId: string;
+  title: string;
 }
 
-const {
-  src,
-  alt,
-  ownerId
-} = Astro.props
-const defaultSrc = 'https://res.cloudinary.com/dzmuriaby/image/upload/v1722284545/vwggt3mhaxyazwwqys97.svg'
+const { src, alt, ownerId, title } = Astro.props;
+const defaultSrc =
+  "https://res.cloudinary.com/dzmuriaby/image/upload/v1722284545/vwggt3mhaxyazwwqys97.svg";
 ---
-<a href={`/users/${ownerId}`}>
+
+<a href={`/users/${ownerId}`} title={title}>
   <Image
-  src={src ?? defaultSrc}
-  alt={alt}
-  height={55}
-  width={55}
-  class='avatar'
+    src={src ?? defaultSrc}
+    alt={alt}
+    height={55}
+    width={55}
+    class="avatar"
   />
 </a>
 <style>
