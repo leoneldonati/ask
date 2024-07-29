@@ -11,35 +11,57 @@ export const POST: APIRoute = async ({ request }) => {
   const from = params.get("from");
   const to = params.get("to");
 
+  console.log({
+    type,
+    from,
+    to,
+  });
   try {
-    const post = (await postsModel.findOne({ _id: new ObjectId(to) })) as any;
-    const hasLiked = post.likes.some((id) => id === from);
+    const post = await postsModel.findOne({ _id: new ObjectId(to) });
 
-    if (!hasLiked) {
-      const postLiked = await postsModel.findOneAndUpdate(
+    if (type === "like") {
+      const hasLiked = post.likes.some((id) => id === from);
+
+      if (!hasLiked) {
+        const postLiked = await postsModel.findOneAndUpdate(
+          { _id: new ObjectId(to) },
+          { $push: { likes: from as never } },
+          { returnDocument: "after" }
+        );
+
+        await postsStore.set([postLiked]);
+
+        return resJson({ post: postLiked, liked: true });
+      }
+
+      const postUnliked = await postsModel.findOneAndUpdate(
         { _id: new ObjectId(to) },
-        { $push: { likes: from as never } },
+        { $pull: { likes: from as never } },
         { returnDocument: "after" }
       );
 
-      await postsStore.set([postLiked]);
-
-      const posts = await postsStore.get();
-      console.log("liked", posts);
-      return resJson({ post: postLiked, liked: true });
+      return resJson({ post: postUnliked, liked: false });
     }
 
-    const postUnliked = await postsModel.findOneAndUpdate(
-      { _id: new ObjectId(to) },
-      { $pull: { likes: from as never } },
-      { returnDocument: "after" }
-    );
+    if (type === "comment") {
+      const payload = await request.json();
 
-    console.log("unliked", postUnliked);
+      if (payload.content === "")
+        return resJson({ message: "The comment is empty!" }, { status: 400 });
 
-    return resJson({ post: postUnliked, liked: false });
+      const comment = {
+        ...payload,
+        createdAt: new Date(),
+      };
+
+      const updatedPost = await postsModel.findOneAndUpdate(
+        { _id: new ObjectId(to) },
+        { $push: { comments: comment as never } },
+        { returnDocument: "after" }
+      );
+      return resJson({ updatedPost });
+    }
   } catch (e) {
     return resJson({ message: "Error on server." }, { status: 500 });
   }
-  return resJson({});
 };
