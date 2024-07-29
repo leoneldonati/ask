@@ -1,30 +1,31 @@
 ---
 import Layout from "@layout";
 import { authStore } from "@stores/auth";
-import PostCardProfile from "@components/post-card-profile.astro";
 import IconPoint from "@icons/point.astro";
 import IconCalendarClock from "@icons/calendar-clock.astro";
 import IconCake from "@icons/cake.astro";
 import IconMapPin from "@icons/map-pin.astro";
 import LeftArrow from "@icons/left-arrow.astro";
 import defaultAvatar from "@assets/default-avatar.svg";
+import PostCard from "@components/post-card.astro";
+import ApiFunctions from "@services/api";
 
 if (!Astro.cookies.get("session")) return Astro.redirect("/login");
 
-const { userLogged } = await authStore.get();
+const { userLogged } = authStore.get();
 
 const avatar = userLogged.avatar[1]?.secureUrl ?? defaultAvatar.src;
 const createdAt = new Date(userLogged.createdAt).toLocaleDateString("es");
 const userBd = new Date(userLogged.date).toLocaleDateString("es");
 const location = userLogged.location;
 
-const headers = new Headers();
-headers.append("Cookie", `session=${Astro.cookies.get("session")?.value}`);
+const {getUserPosts} = ApiFunctions(Astro.url.origin)
 
-const posts = userLogged?.posts
+const posts = await getUserPosts(userLogged._id);
+
 ---
 
-<Layout page={`@${userLogged.username}`} description={userLogged.bio}>
+<Layout page={`@${userLogged?.username}`} description={userLogged?.bio}>
   <section class="profile">
     <a href="/" class="profile__btn--back" title="Go home.">
       <LeftArrow />
@@ -34,17 +35,17 @@ const posts = userLogged?.posts
       <img
         class="profile__img"
         src={avatar}
-        alt={`${userLogged.name} avatar.`}
+        alt={`${userLogged?.name} avatar.`}
         loading="lazy"
         transition:name="avatar"
-        title={userLogged.name}
+        title={userLogged?.name}
       />
 
       <div>
         <h1 class="profile__h1">
-          {userLogged.name}
+          {userLogged?.name}
           <IconPoint />
-          <span class="profile__h1__span">@{userLogged.username}</span>
+          <span class="profile__h1__span">@{userLogged?.username}</span>
         </h1>
 
         <p class="profile_p">
@@ -58,24 +59,36 @@ const posts = userLogged?.posts
             <IconCake /> Birthday: {userBd}
           </li>
           <li>
-            <IconMapPin />
+            <IconMapPin /> Location: {`${location?.city}, ${location?.country}`}
           </li>
         </ul>
       </div>
+      <a class="profile__btn--edit" href={`/profile/${userLogged?._id}`}>
+        Edit profile
+      </a>
     </div>
-    <a class="profile__btn--edit" href={`/profile/${userLogged._id}`}>
-      Edit profile
-    </a>
+    
 
-    <hr style="margin-bottom: 16px;" />
     <div class="profile__container--posts">
-      {
-        posts?.length !== 0 &&
-          posts.map((post) => <PostCardProfile post={post} />)
-      }
+      <header class="profile__container--header">
+        <button>
+          Posts: <strong>{posts?.length}</strong>
+        </button>
+
+        <button>
+          Followers: <strong>{userLogged?.followers.length}</strong>
+        </button>
+
+        <button>
+          Followed: <strong>{userLogged?.followed.length}</strong>
+        </button>
+      </header>
+
+      {posts?.length !== 0 && posts.map((post) => <PostCard post={post} />)}
     </div>
   </section>
 </Layout>
+
 <style>
   .profile {
     min-height: 100dvh;
@@ -87,16 +100,18 @@ const posts = userLogged?.posts
   }
   .profile__btn--back {
     position: fixed;
-    z-index: 2;
+    top: 1%;
+    z-index: 3;
     color: var(--color_accent);
     display: flex;
     border: 3px solid var(--color_accent);
     border-radius: 100%;
     padding: 10px;
     cursor: pointer;
-    backdrop-filter: blur(20px);
   }
   .profile__btn--edit {
+    position: sticky;
+    top: 0;
     display: flex;
     max-width: fit-content;
     border-radius: var(--border_size);
@@ -119,7 +134,7 @@ const posts = userLogged?.posts
     object-position: center;
     border-radius: 100%;
     width: 100%;
-    max-width: 400px;
+    max-width: 300px;
     transition: transform 0.2s ease;
   }
   .profile__container {
@@ -127,13 +142,29 @@ const posts = userLogged?.posts
     flex-flow: row;
     align-items: flex-start;
     justify-content: space-between;
+    padding: var(--padding_boxes) 0;
   }
   .profile__container--posts {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    flex: 1;
+    display: flex;
+    flex-flow: column;
   }
+  .profile__container--header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    border-top: 1px solid var(--color_secondary);
+    border-bottom: 1px solid var(--color_secondary);
+    display: flex;
+    flex-flow: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: var(--padding_boxes);
+    backdrop-filter: blur(1em);
 
+    & > button {
+      padding: var(--padding_boxes);
+    }
+  }
   .profile__h1 {
     display: flex;
   }
