@@ -1,7 +1,7 @@
 ---
-import { authStore } from "src/stores/auth";
-import AvatarSelector from "../components/avatar-selector.astro";
-import Layout from "../layouts/Layout.astro";
+import { authStore } from "@stores/auth";
+import AvatarSelector from "@components/react/avatar-selector";
+import Layout from "@layout";
 import ErrorCard from "@components/error-card.astro";
 
 if (Astro.request.method === "POST") {
@@ -38,7 +38,7 @@ const { errors } = await authStore.get();
       enctype="multipart/form-data"
       transition:name="form"
     >
-      <AvatarSelector />
+      <AvatarSelector client:visible />
 
       <div class="sign__container--names">
         <label for="name" class="sign__label">
