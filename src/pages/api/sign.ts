@@ -6,8 +6,9 @@ import { validateUserPayload } from "@libs/zod";
 import { encrypt } from "@libs/bcrypt";
 import { resJson } from "@helpers/response";
 import { usersModel } from "@db";
+import { getLocationBy } from "@libs/ipstack";
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, clientAddress }) => {
   try {
     const form = await request.formData();
 
@@ -76,16 +77,15 @@ export const POST: APIRoute = async ({ request }) => {
       email: result.email,
       hash,
       isVerified: false,
-      location: {},
+      location: await getLocationBy({ ip: clientAddress }),
       settings: {},
       createdAt: new Date(),
       updatedAt: new Date(),
       followers: [],
       followed: [],
-      posts: []
+      posts: [],
     };
 
-    console.log(userSchema);
     await usersModel.insertOne(userSchema);
 
     return resJson({ message: "Signed in." });
