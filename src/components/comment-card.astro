@@ -1,4 +1,5 @@
 ---
+import Avatar from "./avatar.astro";
 import PostHeaderTop from "./post-header-top.astro";
 
 interface Props {
@@ -16,10 +17,13 @@ const { comment } = Astro.props;
     content={comment.content}
     createdAt={comment.createdAt}
   />
+
+  <Avatar src={comment.owner.avatar[0].secureUrl} alt={comment.owner.name} ownerId={comment.owner._id} title={comment.owner.name} />
 </article>
 
 <style>
   .comment__card {
+    display: flex;
     width: 100%;
     padding: var(--padding_boxes);
     border: 1px solid var(--color_secondary);
