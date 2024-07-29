@@ -59,7 +59,8 @@ export const POST: APIRoute = async ({ request }) => {
         { $push: { comments: comment as never } },
         { returnDocument: "after" }
       );
-      return resJson({ updatedPost });
+      console.log(updatedPost)
+      return resJson({ message: `Comment sent to ${updatedPost.userOwner.name}` });
     }
   } catch (e) {
     return resJson({ message: "Error on server." }, { status: 500 });
