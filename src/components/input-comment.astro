@@ -1,9 +1,34 @@
 ---
 interface Props {
   name: string;
+  payload: {
+    from: string;
+    to: string;
+  };
+  userLogged: UserLogged;
 }
 
-const { name } = Astro.props;
+const { name, payload, userLogged } = Astro.props;
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData()
+  const content = form.get('content-comment')?.toString()
+  fetch(`${Astro.url.origin}/api/post-actions?type=comment&from=${payload.from}&to=${payload.to}`, {
+    method: 'POST',
+    body: JSON.stringify({
+      owner: userLogged,
+      content
+    }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(res => {
+      return res.json()
+    })
+    .then(data => console.log(data))
+    .catch(err => console.log(err))
+}
 ---
 
 <form class="input__comment__form" method="post">

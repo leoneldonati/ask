@@ -16,7 +16,10 @@ const { comment } = Astro.props;
     content={comment.content}
     createdAt={comment.createdAt}
   />
-  <p class="comment__card__p">
-    {comment?.content}
-  </p>
 </article>
+
+<style>
+  .comment__card {
+    width: 100%;
+  }
+</style>

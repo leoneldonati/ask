@@ -2,11 +2,12 @@
 import Layout from "@layout";
 import PostCard from "@components/post-card.astro";
 import CommentCard from "@components/comment-card.astro";
-import InputComment from "@components/input-comment.astro"
+import InputComment from "@components/input-comment.astro";
+import { authStore } from "@stores/auth";
 const params = new URL(Astro.url).searchParams;
 const from = params.get("from");
 const to = params.get("to");
-
+const { userLogged } = authStore.get();
 async function getPost() {
   try {
     const res = await fetch(`${Astro.url.origin}/api/get-post-by?id=${to}`);
@@ -32,17 +33,23 @@ console.log({ from, to, post });
 
       {post.comments?.map((comment) => <CommentCard comment={comment} />)}
 
-      <InputComment name={post?.userOwner?.name} />
+      <InputComment
+        name={post?.userOwner?.name}
+        payload={{ from, to }}
+        userLogged={userLogged}
+      />
     </div>
   </section>
 </Layout>
 
 <style>
   .comment {
-
   }
   .comment__container {
     position: relative;
+    display: flex;
+    flex-flow: column;
+    align-items: start;
     flex: 1;
     max-width: calc(var(--max_w) - 200px);
     width: 100%;
