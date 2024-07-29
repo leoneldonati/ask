@@ -12,10 +12,11 @@ const {
   alt,
   ownerId
 } = Astro.props
+const defaultSrc = 'https://res.cloudinary.com/dzmuriaby/image/upload/v1722284545/vwggt3mhaxyazwwqys97.svg'
 ---
-<a href={`/profile/${ownerId}`}>
+<a href={`/users/${ownerId}`}>
   <Image
-  src={src}
+  src={src ?? defaultSrc}
   alt={alt}
   height={55}
   width={55}
@@ -27,5 +28,6 @@ const {
     aspect-ratio: 4 / 4;
     object-fit: cover;
     object-position: center;
+    border-radius: 100%;
   }
 </style>
