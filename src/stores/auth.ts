@@ -1,4 +1,4 @@
-import { createState } from "@libs/state-js";
+import { atom } from "nanostores";
 
 interface AuthStore {
   userLogged?: null | UserLogged;
@@ -6,7 +6,7 @@ interface AuthStore {
     message: string;
   } | null;
 }
-export const authStore = createState<AuthStore>({
+export const authStore = atom<AuthStore>({
   userLogged: null,
   errors: null,
 });
