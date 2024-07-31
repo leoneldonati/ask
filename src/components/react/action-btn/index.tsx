@@ -77,7 +77,7 @@ export default function ActionBtn(props: Props) {
         setLength(length - 1);
         return setStyles({ fill: "none" });
       }
-      setLength(length + 1);
+      setLength(length + 1)
     } catch (e) {}
   }
 
@@ -101,9 +101,9 @@ export default function ActionBtn(props: Props) {
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
             <path d="M7 10h10" />
@@ -126,10 +126,10 @@ export default function ActionBtn(props: Props) {
             height="24"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            style={{ fill: !hasLiked && "none" }}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ fill: !hasLiked ? "none" : "inherit"}}
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
             <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"></path>
