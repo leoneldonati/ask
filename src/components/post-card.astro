@@ -70,9 +70,7 @@ const hasImages = post?.images.length !== 0;
       }}
       action="like"
       client:visible
-    >
-      <Heart />
-    </ActionBtn>
+    />
     <ActionBtn
       length={post?.comments?.length}
       payload={{
@@ -83,9 +81,7 @@ const hasImages = post?.images.length !== 0;
         userLogged,
       }}
       action="comment"
-    >
-      <Comment />
-    </ActionBtn>
+    />
   </div>
 </article>
 
