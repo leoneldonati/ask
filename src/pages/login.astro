@@ -22,12 +22,15 @@ if (Astro.request.method === "POST") {
         httpOnly: true,
         secure: true,
       });
+      if (res.headers.get("Content-Type") === "application/json") {
+        const data = await res.json();
 
-      const data = await res.json();
+        authStore.set({ userLogged: data, errors: null });
 
-      authStore.set({ userLogged: data, errors: null });
+        return Astro.redirect("/");
+      }
 
-      return Astro.redirect("/");
+      console.log(await res.text())
     }
     const error = await res.json();
     authStore.set({ errors: error, userLogged: null });
