@@ -2,31 +2,24 @@
 import Layout from "src/layouts/Layout.astro";
 import ImageSelector from "@components/post-image-selector.astro";
 import { authStore } from "@stores/auth";
+import Avatar from "@components/avatar.astro";
 
 if (!Astro.cookies.get("session")) return Astro.redirect("/login");
 
-const { userLogged } = await authStore.get();
+const { userLogged } = authStore.get();
 if (Astro.request.method === "POST") {
-  const form = (await Astro.request
-    .formData()
-    .catch((e) => console.log(e))) as FormData;
+  const form = (await Astro.request.formData()) as FormData;
   form.append("userId", userLogged?._id);
   return fetch(`${Astro.url.origin}/api/add-post`, {
     method: "POST",
     body: form,
   })
-    .then((res) => res.json())
-    .then(({ updatedUser }) => {
-      authStore.set({
-        userLogged: {
-          ...userLogged,
-          posts: [...updatedUser.posts] as Post[],
-        },
-        errors: null,
-      });
-      return Astro.redirect("/");
+    .then((res) => {
+      if (res.ok) return Astro.redirect("/");
     })
-    .catch((err) => console.error(err));
+    .catch((err) => {
+      console.error(err);
+    });
 }
 
 const avatar = userLogged?.avatar[0]?.secureUrl;
@@ -42,12 +35,11 @@ const avatar = userLogged?.avatar[0]?.secureUrl;
         <h1 transition:name="ask">Ask!</h1>
       </a>
 
-      <img
+      <Avatar
         src={avatar}
-        alt=""
-        loading="lazy"
-        transition:name="avatar"
-        title={userLogged?.name}
+        ownerId={userLogged?.id}
+        alt={userLogged?.name}
+        title={`Go ${userLogged?.name} profile`}
       />
     </div>
 

@@ -1,6 +1,6 @@
-import { postsModel, usersModel } from "@db";
+import { postsModel } from "@db";
 import type { APIRoute } from "astro";
-import { ObjectId } from "mongodb";
+import { rm } from "fs/promises";
 import { resJson } from "src/helpers/response";
 import { uploadFile } from "src/libs/cld";
 import { optimizePostAsset } from "src/libs/sharp";
@@ -24,11 +24,11 @@ export const POST: APIRoute = async ({ request }) => {
               folder: "posts",
             })
         )
-        .map(
-          async (assets) =>
-            (await uploadFile((await assets)?.filePath, { folder: "posts" }))
-              ?.data
-        );
+        .map(async (assets) => {
+          return (
+            await uploadFile((await assets)?.filePath, { folder: "posts" })
+          )?.data;
+        });
 
       uploadedFiles = await Promise.all(promises);
     }
@@ -44,30 +44,23 @@ export const POST: APIRoute = async ({ request }) => {
         ?.data;
 
       uploadedFiles = [uploadedFile];
+
+      await rm(filePath);
     }
-    
+
     const postSchema = {
       content,
-      userId,
-      userOwner: await usersModel.findOne({ _id: new ObjectId(userId) }),
+      ownerId: userId,
       createdAt: new Date(Date.now()),
       updatedAt: new Date(Date.now()),
       images: uploadedFiles ? uploadedFiles : [],
       likes: [],
       comments: [],
     };
-    
-    
-    const updatedUser = await usersModel.findOneAndUpdate(
-      { _id: new ObjectId(userId) },
-      { $push: { posts: postSchema as never } },
-      { returnDocument: "after" }
-    );
-    
+
     await postsModel.insertOne(postSchema);
 
-
-    return resJson({ message: "Posted!", updatedUser });
+    return resJson({ message: "Posted!" });
   } catch (e) {
     return resJson({ message: "Error on server." });
   }
