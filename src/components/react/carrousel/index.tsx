@@ -15,6 +15,11 @@ export default function Carrousel(props: { imagesPaths: string[] }) {
   };
   return (
     <picture>
+      <span className="container--length">
+        <strong>
+          {(Math.abs(position) / 100) + 1}/{props.imagesPaths.length}
+        </strong>
+      </span>
       <div
         id="container"
         style={{
