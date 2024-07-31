@@ -37,7 +37,7 @@ const avatar = userLogged?.avatar[0]?.secureUrl;
 
       <Avatar
         src={avatar}
-        ownerId={userLogged?.id}
+        ownerId={userLogged?._id}
         alt={userLogged?.name}
         title={`Go ${userLogged?.name} profile`}
       />

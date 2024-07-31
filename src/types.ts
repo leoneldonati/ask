@@ -15,6 +15,8 @@ export interface UserLogged {
     country_name: string;
   };
   avatar: Array<{ secureUrl: string, publicId: string }>;
+  followers: string[];
+  followed: string[];
 }
 
 export interface PostComment {
