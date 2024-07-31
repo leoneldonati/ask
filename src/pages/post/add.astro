@@ -1,6 +1,6 @@
 ---
 import Layout from "src/layouts/Layout.astro";
-import ImageSelector from "@components/post-image-selector.astro";
+import ImageSelector from "@components/react/post-image-selector";
 import { authStore } from "@stores/auth";
 import Avatar from "@components/avatar.astro";
 
@@ -57,7 +57,7 @@ const avatar = userLogged?.avatar[0]?.secureUrl;
         placeholder="Share how you feel..."
         autofocus></textarea>
 
-      <ImageSelector />
+      <ImageSelector client:visible />
 
       <button class="add-post__btn" type="submit" form="form"> Post </button>
     </form>
