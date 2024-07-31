@@ -1,4 +1,4 @@
-interface UserLogged {
+export interface UserLogged {
   _id: string;
   name: string;
   email: string;
