@@ -1,0 +1,41 @@
+picture {
+  position: relative;
+  overflow-x: hidden;
+
+  & > button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    background: var(--color_secondary);
+    padding: 10px;
+    border: none;
+    border-radius: 100%;
+    display: flex;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    & > svg {
+      transition: transform 0.2s ease-out;
+    }
+    &:active > svg {
+      transform: rotate(-20deg);
+    }
+  }
+  & > button:nth-child(2) {
+    right: 0;
+    &:active > svg {
+      transform: rotate(20deg);
+    }
+  }
+}
+#container {
+  display: flex;
+  flex-flow: row nowrap;
+  transition: transform 0.2s ease-in-out;
+  & > img {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center;
+    width: 100%;
+  }
+}
