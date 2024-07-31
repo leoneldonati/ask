@@ -21,6 +21,11 @@ const imagesPaths = post?.images?.map((path) => path.secureUrl);
 
 const hasMultipleImages = imagesPaths?.length > 1;
 const hasImages = post?.images.length !== 0;
+// VERIFICAR SI EL USUARIO LOGEADO YA INTERACTUO CON EL POST
+const hasLiked = post.likes?.find((id) => id === userLogged?._id) !== undefined;
+const hasCommented =
+  post.comments?.find((comment) => comment?.owner?._id === userLogged?._id) !==
+  undefined;
 ---
 
 <article class="post">
@@ -67,6 +72,7 @@ const hasImages = post?.images.length !== 0;
         userLogged,
       }}
       action="like"
+      condition={hasLiked}
       client:visible
     />
     <ActionBtn
@@ -78,6 +84,7 @@ const hasImages = post?.images.length !== 0;
         ownerName: user?.name,
         userLogged,
       }}
+      condition={hasCommented}
       action="comment"
     />
   </div>

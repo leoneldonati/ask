@@ -13,52 +13,49 @@ type Props = {
     ownerName: string;
   };
   length: number;
+  condition: boolean;
 };
 export default function ActionBtn(props: Props) {
-  const { action, length: initialLength, payload } = props;
+  const { action, length: initialLength, payload, condition: propCondition} = props;
 
   const [styles, setStyles] = useState({});
   const [length, setLength] = useState(initialLength);
   const [title, setTitle] = useState("");
-  // VERIFICAR SI EL USUARIO LOGEADO YA INTERACTUO CON EL POST
-  const hasLiked =
-    payload.likes?.find((id) => id === payload.userLogged?._id) !== undefined;
-  const hasCommented =
-    action === "comment" &&
-    payload.comments?.find(
-      (comment) => comment?.owner?._id === payload.userLogged?._id
-    ) !== undefined;
+  const [condition, setCondition] = useState(propCondition)
+
 
   // MANEJAR ESTILOS DEL BOTON
   function handleStyles() {
-    if (action === "comment" && hasCommented) return setStyles({});
+    if (action === "comment" && condition) return setStyles({});
 
-    if (action === "like" && hasLiked)
+    if (action === "like" && condition) {
       return setStyles({
         color: "var(--color_accent)",
         fill: "var(--color_accent)",
       });
+    }
+    else {
+      return setStyles({
+        fill: "none",
+      });
+    }
+      
   }
 
   // MANEJAR CAMBIO DE TITULO DEL BOTON
   function handleTitle() {
     if (action === "comment") {
-      return hasCommented
+      return condition
         ? setTitle("You has commented this!")
         : setTitle(`Share with ${payload?.ownerName}!`);
     }
 
     if (action === "like") {
-      return hasLiked ? setTitle("Liked!") : setTitle("Like this post!");
+      return condition ? setTitle("Liked!") : setTitle("Like this post!");
     }
   }
 
   async function sendLike() {
-    setStyles({
-      color: "var(--color_accent)",
-      fill: "var(--color_accent)",
-    });
-    setTitle("Liked!");
     try {
       const res = await fetch(
         `http://localhost:4321/api/post-actions?type=${action}&from=${payload?.from}&to=${payload?.to}`,
@@ -70,21 +67,21 @@ export default function ActionBtn(props: Props) {
 
       const data = await res.json();
 
-      const hasLiked = data?.post?.likes?.find((id) => payload?.from === id);
-
-      if (!hasLiked) {
-        setTitle("Like this post!");
+      if (!data?.liked) {
+        setCondition(false)
         setLength(length - 1);
-        return setStyles({ fill: "none" });
+        return
       }
-      setLength(length + 1)
+      setCondition(true)
+      
+      setLength(length + 1);
     } catch (e) {}
   }
 
   useEffect(() => {
     handleStyles();
     handleTitle();
-  }, []);
+  }, [condition]);
   return (
     <>
       {action === "comment" ? (
@@ -129,7 +126,7 @@ export default function ActionBtn(props: Props) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            style={{ fill: !hasLiked ? "none" : "inherit"}}
+            style={{ fill: !condition ? "none" : "inherit" }}
           >
             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
             <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"></path>

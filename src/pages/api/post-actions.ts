@@ -17,23 +17,22 @@ export const POST: APIRoute = async ({ request }) => {
       const hasLiked = post.likes.some((id) => id === from);
 
       if (!hasLiked) {
-        const postLiked = await postsModel.findOneAndUpdate(
+        postsModel.findOneAndUpdate(
           { _id: new ObjectId(to) },
           { $push: { likes: from as never } },
           { returnDocument: "after" }
         );
 
-
-        return resJson({ post: postLiked, liked: true });
+        return resJson({ liked: true });
       }
 
-      const postUnliked = await postsModel.findOneAndUpdate(
+      await postsModel.findOneAndUpdate(
         { _id: new ObjectId(to) },
         { $pull: { likes: from as never } },
         { returnDocument: "after" }
       );
 
-      return resJson({ post: postUnliked, liked: false });
+      return resJson({ liked: false });
     }
 
     if (type === "comment") {
@@ -56,6 +55,9 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
   } catch (e) {
-    return resJson({ message: "Error on server." }, { status: 500 });
+    return resJson(
+      { message: "Error on server.", liked: false },
+      { status: 500 }
+    );
   }
 };
