@@ -52,7 +52,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     let uploadedFiles = null;
     if (file) {
       const buffer = await file.arrayBuffer();
-      const { ok, error, filesPaths } = await optimizeAvatar(buffer, {
+      const { ok, filesPaths } = await optimizeAvatar(buffer, {
         folder: "avatares",
       });
       const promisesArray =
@@ -78,12 +78,15 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       hash,
       isVerified: false,
       location: await getLocationBy({ ip: clientAddress }),
-      settings: {},
+      settings: {
+        theme: "light",
+        enabledNotifications: true,
+        accentColor: "",
+      },
       createdAt: new Date(),
       updatedAt: new Date(),
       followers: [],
       followed: [],
-      posts: [],
     };
 
     await usersModel.insertOne(userSchema);
