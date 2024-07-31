@@ -16,7 +16,6 @@ if (Astro.request.method === "POST") {
     if (res.ok) {
       const sessionString = res.headers.get("cookie")?.split("=")[0];
 
-      console.log(sessionString, '/login')
       const ONE_HOUR = 3600000;
       Astro.cookies.set("session", sessionString ?? "", {
         expires: new Date(Date.now() + ONE_HOUR),
@@ -26,20 +25,19 @@ if (Astro.request.method === "POST") {
 
       const data = await res.json();
 
-      await authStore.set({ userLogged: data, errors: null });
+      authStore.set({ userLogged: data, errors: null });
 
       return Astro.redirect("/");
     }
     const error = await res.json();
-    await authStore.set({ errors: error, userLogged: null });
+    authStore.set({ errors: error, userLogged: null });
   } catch (e) {
     console.log(e);
+    authStore.set({ errors: e, userLogged: null });
   }
 }
 
-const { errors } = await authStore.get();
-
-console.log(await authStore.get());
+const { errors } = authStore.get();
 ---
 
 <Layout page="Login" description="">

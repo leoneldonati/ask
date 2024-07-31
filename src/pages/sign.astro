@@ -17,11 +17,11 @@ if (Astro.request.method === "POST") {
       return Astro.redirect("/login");
     }
   } catch (e) {
-    await authStore.set({ errors: e, userLogged: null });
+    authStore.set({ errors: e, userLogged: null });
   }
 }
 
-const { errors } = await authStore.get();
+const { errors } = authStore.get();
 ---
 
 <Layout description="" page="Sign in">
