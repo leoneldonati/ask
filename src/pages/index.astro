@@ -31,18 +31,6 @@ const posts = await ApiFn(Astro.url.origin)
     <Header />
 
     <div class="home__container">
-      <ul>
-        <li>
-          <a href=`/settings/${userLogged?._id}`>Settings</a>
-        </li>
-        <li>
-          <button id="theme-btn">
-            <IconLeft />
-          </button>
-        </li>
-        <li></li>
-      </ul>
-
       <div class="home__container--posts">
         {
           posts?.length !== 0 ? (
