@@ -15,9 +15,6 @@ interface UserLogged {
     country_name: string;
   };
   avatar: Array<{ secureUrl: string, publicId: string }>;
-  posts: Post[];
-  followers: [];
-  followed: []
 }
 
 interface PostComment {
@@ -27,10 +24,9 @@ interface PostComment {
   createdAt: string;
   
 }
-interface Post {
+export interface Post {
   _id: string;
-  userId: string;
-  userOwner: UserLogged;
+  ownerId: string;
   content: string;
   images: any;
   createdAt: string;
