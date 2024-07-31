@@ -1,3 +1,4 @@
+import type { UserLogged } from "@types";
 import { atom } from "nanostores";
 
 interface AuthStore {
