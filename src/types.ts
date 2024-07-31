@@ -17,7 +17,7 @@ export interface UserLogged {
   avatar: Array<{ secureUrl: string, publicId: string }>;
 }
 
-interface PostComment {
+export interface PostComment {
   owner: UserLogged;
   content: string;
   _id: string;

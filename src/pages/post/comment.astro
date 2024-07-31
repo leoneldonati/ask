@@ -4,25 +4,16 @@ import PostCard from "@components/post-card.astro";
 import CommentCard from "@components/comment-card.astro";
 import InputComment from "@components/input-comment.astro";
 import { authStore } from "@stores/auth";
+import type { Post, UserLogged } from "@types";
+import ApiFunctions from "@services/api";
 const params = new URL(Astro.url).searchParams;
 const from = params.get("from");
 const to = params.get("to");
 const { userLogged } = authStore.get();
-async function getPost() {
-  try {
-    const res = await fetch(`${Astro.url.origin}/api/get-post-by?id=${to}`);
 
-    if (res.ok) {
-      const data = await res.json();
-      return data;
-    }
-  } catch (e) {
-    console.log(e);
-  }
-}
-const post = (await getPost().catch((err) => {
-  console.log(err);
-})) as Post;
+const post = await ApiFunctions(Astro.url.origin).getPost(to) as Post;
+
+const userOwner = await ApiFunctions(Astro.url.origin).getUser(post?.ownerId) as UserLogged;
 ---
 
 <Layout>
@@ -33,7 +24,7 @@ const post = (await getPost().catch((err) => {
       {post?.comments?.map((comment) => <CommentCard comment={comment} />)}
 
       <InputComment
-        name={post?.userOwner?.name}
+        name={userOwner?.name}
         payload={{ from, to }}
         userLogged={userLogged}
       />
