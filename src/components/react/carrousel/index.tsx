@@ -37,6 +37,7 @@ export default function Carrousel(props: { imagesPaths: string[] }) {
           opacity: finalCarrousel && 0,
           pointerEvents: finalCarrousel ? "none" : "auto",
         }}
+        type="button"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -62,6 +63,7 @@ export default function Carrousel(props: { imagesPaths: string[] }) {
           opacity: position === 0 && 0,
           pointerEvents: position === 0 ? "none" : "auto",
         }}
+        type="button"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
