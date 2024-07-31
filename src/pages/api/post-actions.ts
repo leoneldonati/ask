@@ -1,6 +1,5 @@
 import { postsModel, usersModel } from "@db";
 import { resJson } from "@helpers/response";
-import { postsStore } from "@stores/posts";
 import type { APIRoute } from "astro";
 import { ObjectId } from "mongodb";
 
@@ -24,7 +23,6 @@ export const POST: APIRoute = async ({ request }) => {
           { returnDocument: "after" }
         );
 
-        await postsStore.set([postLiked]);
 
         return resJson({ post: postLiked, liked: true });
       }
