@@ -1,111 +1,169 @@
 ---
 import Layout from "@layout";
-import { authStore } from "@stores/auth";
-import { parseDate } from "@helpers/date";
-import PostCardProfile from "@components/post-card-profile.astro";
 import IconPoint from "@icons/point.astro";
 import IconCalendarClock from "@icons/calendar-clock.astro";
 import IconCake from "@icons/cake.astro";
 import IconMapPin from "@icons/map-pin.astro";
+import LeftArrow from "@icons/left-arrow.astro";
+import defaultAvatar from "@assets/default-avatar.svg";
+import PostCard from "@components/post-card.astro";
+import ApiFunctions from "@services/api";
+import { COOKIE } from "@const";
 
-if (!Astro.cookies.get("session")) return Astro.redirect("/login");
+if (!Astro.cookies.get(COOKIE.name)) return Astro.redirect("/login");
 
-const { userLogged } = await authStore.get();
+const { getUserPosts, getUser } = ApiFunctions(Astro.url.origin);
 
-const { _id: userId } = userLogged;
-const id = Astro.params?.id;
+const user = await getUser(Astro.params?.id);
 
-if (id === userId) return Astro.redirect("/profile");
+const avatar = user?.avatar[1]?.secureUrl ?? defaultAvatar.src;
+const createdAt = new Date(user.createdAt).toLocaleDateString("es");
+const userBd = new Date(user.date).toLocaleDateString("es");
+const location = user?.location;
 
-const headers = new Headers();
-headers.append("Cookie", `session=${Astro.cookies.get("session")?.value}`);
-const res = await fetch(`${Astro.url.origin}/api/users/${id}`, { headers });
-
-if (!res.ok) return Astro.redirect("/");
-
-const user = await res.json();
-
-const avatar = user.avatar.original.secureUrl;
-
-const userBd = parseDate(user.date);
-const createdAt = parseDate(user.createdAt);
-
-console.log(user);
+const posts = await getUserPosts(Astro.params?.id);
 ---
 
-<Layout page={`@${user.username}`} description={user.bio}>
+<Layout page={`@${user?.username}`} description={user?.bio}>
   <section class="profile">
-    <img
-      class="profile__img"
-      src={avatar}
-      alt={`${user.name} avatar.`}
-      loading="lazy"
-      transition:name="avatar"
-      title={user.name}
-    />
+    <a href="/" class="profile__btn--back" title="Go home.">
+      <LeftArrow />
+    </a>
 
     <div class="profile__container">
-      <h1 class="profile__h1">
-        {user.name}
-        <IconPoint />
-        <span class="profile__h1__span">@{user.username}</span>
-      </h1>
+      <img
+        class="profile__img"
+        src={avatar}
+        alt={`${user?.name} avatar.`}
+        loading="lazy"
+        transition:name="avatar"
+        title={user?.name}
+      />
 
-      <p class="profile_p">
-        {user.bio}
-      </p>
-      <ul class="profile__ul">
-        <li>
-          <IconCalendarClock /> Joined at: {createdAt}
-        </li>
-        <li>
-          <IconCake /> Birthday: {userBd}
-        </li>
-        <li>
-          <IconMapPin />
-          {user.location ? user.location : "None"}
-        </li>
-      </ul>
+      <div>
+        <h1 class="profile__h1">
+          {user?.name}
+          <IconPoint />
+          <span class="profile__h1__span">@{user?.username}</span>
+        </h1>
+
+        <p class="profile_p">
+          {user.bio}
+        </p>
+        <ul class="profile__ul">
+          <li>
+            <IconCalendarClock /> Joined at: {createdAt}
+          </li>
+          <li>
+            <IconCake /> Birthday: {userBd}
+          </li>
+          <li>
+            <IconMapPin /> Location: {
+              `${location?.city}, ${location?.country_name}`
+            }
+          </li>
+        </ul>
+      </div>
+      <a class="profile__btn--edit" href={`/profile/${user?._id}`}>
+        Edit profile
+      </a>
     </div>
 
-    <span class="posts--length">
-      {user.posts.length} posts.
-    </span>
-    <hr />
     <div class="profile__container--posts">
-      {
-        user.posts.length !== 0 &&
-          user.posts.map((post) => <PostCardProfile post={post} />)
-      }
+      <header class="profile__container--header">
+        <button>
+          Posts: <strong>{posts?.length}</strong>
+        </button>
+
+        <button>
+          Followers: <strong>{user?.followers.length}</strong>
+        </button>
+
+        <button>
+          Followed: <strong>{user?.followed.length}</strong>
+        </button>
+      </header>
+
+      {posts?.length !== 0 && posts.map((post) => <PostCard post={post} />)}
     </div>
   </section>
 </Layout>
+
 <style>
   .profile {
     min-height: 100dvh;
     max-width: var(--max_w);
     margin: 0 auto;
     padding: 6px;
+    display: flex;
+    flex-flow: column;
+  }
+  .profile__btn--back {
+    position: fixed;
+    top: 1%;
+    z-index: 3;
+    color: var(--color_accent);
+    display: flex;
+    border: 3px solid var(--color_accent);
+    border-radius: 100%;
+    padding: 10px;
+    cursor: pointer;
+  }
+  .profile__btn--edit {
+    position: sticky;
+    top: 0;
+    display: flex;
+    max-width: fit-content;
+    border-radius: var(--border_size);
+    padding: var(--padding_boxes);
+    background-color: var(--color_accent);
+    color: #fff;
+    box-shadow: 0 0 4px var(--color_accent_light);
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(0.98);
+    }
   }
   .profile__img {
+    position: sticky;
+    top: 0;
     display: flex;
     aspect-ratio: 4 / 4;
     object-fit: cover;
     object-position: center;
     border-radius: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    box-shadow: 0 0 8px var(--color_secondary);
+    width: 100%;
+    max-width: 300px;
+    transition: transform 0.2s ease;
   }
   .profile__container {
-    position: relative;
-    margin: 16px 0;
+    display: flex;
+    flex-flow: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: var(--padding_boxes) 0;
   }
   .profile__container--posts {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: auto;
+    display: flex;
+    flex-flow: column;
+  }
+  .profile__container--header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    border-top: 1px solid var(--color_secondary);
+    border-bottom: 1px solid var(--color_secondary);
+    display: flex;
+    flex-flow: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: var(--padding_boxes);
+    backdrop-filter: blur(1em);
+
+    & > button {
+      padding: var(--padding_boxes);
+    }
   }
   .profile__h1 {
     display: flex;
@@ -115,10 +173,5 @@ console.log(user);
   }
   .profile__ul {
     color: var(--color_secondary_text);
-  }
-  .posts--length {
-    display: block;
-    text-align: center;
-    margin-bottom: 2px;
   }
 </style>
