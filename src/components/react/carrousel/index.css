@@ -1,7 +1,6 @@
 picture {
   position: relative;
-  overflow-x: hidden;
-
+  overflow: hidden;
   & > button {
     position: absolute;
     top: 50%;
@@ -49,6 +48,7 @@ picture {
   flex-flow: row nowrap;
   transition: transform 0.2s ease-in-out;
   & > img {
+    display: block;
     aspect-ratio: 16 / 9;
     object-fit: cover;
     object-position: center;
