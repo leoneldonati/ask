@@ -4,6 +4,7 @@ import { authStore } from "../stores/auth";
 import ErrorCard from "../components/error-card.astro";
 import BrandGoogle from "../icons/brand-google.astro";
 import BrandInstagram from "../icons/brand-instagram.astro";
+import { COOKIE } from "@const";
 
 if (Astro.request.method === "POST") {
   try {
@@ -17,7 +18,7 @@ if (Astro.request.method === "POST") {
       const sessionString = res.headers.get("cookie")?.split("=")[0];
 
       const ONE_HOUR = 3600000;
-      Astro.cookies.set("session", sessionString ?? "", {
+      Astro.cookies.set(COOKIE.name, sessionString ?? "", {
         expires: new Date(Date.now() + ONE_HOUR),
         httpOnly: true,
         secure: true,
