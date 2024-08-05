@@ -15,7 +15,8 @@
       "@libs/*": ["./src/libs/*"],
       "@layout": ["./src/layouts/Layout.astro"],
       "@assets/*": ["./src/assets/*"],
-      "@types": ["./src/types.ts"]
+      "@types": ["./src/types.ts"],
+      "@const": ["./src/constants.ts"]
     }
   }
 }
