@@ -22,7 +22,7 @@ const avatarSrc = userLogged?.avatar[0]?.secureUrl
     </li>
   </ul>
 
-  <button class="home__header__btn--session" title="Close session?">
+  <a class="home__header__btn--session" title="Close session?" href="/logout">
     <img
       src={avatarSrc}
       alt={userLogged?.name}
@@ -30,7 +30,7 @@ const avatarSrc = userLogged?.avatar[0]?.secureUrl
       class="home__header_avatar"
       transition:name="avatar"
     />
-  </button>
+  </a>
 </header>
 
 <style>
