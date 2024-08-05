@@ -12,8 +12,7 @@ export const GET:APIRoute = async ({ request }) => {
 
   try {
 
-    const result = await postsModel.find({}).limit(Number(q)).toArray()
-    
+    const result = await postsModel.find({}).limit(Number(q)).sort({ createdAt: -1 }).toArray()
     return resJson(result)
   }
   catch (e) {
