@@ -12,7 +12,7 @@ function ApiFunctions(origin: string) {
   async function getPost(id: string) {
     try {
       const res = await fetch(`${origin}/api/get-post-by?id=${id}`);
-  
+
       if (res.ok) {
         const data = await res.json();
         return data;
@@ -41,11 +41,37 @@ function ApiFunctions(origin: string) {
       console.log(e);
     }
   }
+
+  async function addPost(paylaod: FormData) {
+    try {
+      const res = await fetch(`${origin}/api/add-post`, {
+        method: "POST",
+        body: paylaod,
+      });
+
+      if (res.ok)
+        return {
+          ok: true,
+          data: (await res.json())?.savedPost,
+        };
+
+      return {
+        ok: false,
+        error: await res.json(),
+      };
+    } catch (err) {
+      return {
+        ok: false,
+        error: err,
+      };
+    }
+  }
   return {
     getPost,
     getPosts,
     getUser,
     getUserPosts,
+    addPost,
   };
 }
 export default ApiFunctions;
