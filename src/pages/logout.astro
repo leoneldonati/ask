@@ -1,0 +1,11 @@
+---
+import { COOKIE } from "@const";
+import { authStore } from "@stores/auth";
+import { postsStore } from "@stores/posts";
+
+Astro.cookies.set(COOKIE.name, '', { expires: new Date(0) })
+authStore.set({ userLogged: null, errors: null })
+postsStore.set([])
+
+return Astro.redirect('/login')
+---
