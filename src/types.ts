@@ -14,7 +14,7 @@ export interface UserLogged {
     city: string;
     country_name: string;
   };
-  avatar: Array<{ secureUrl: string, publicId: string }>;
+  avatar: Array<{ secureUrl: string; publicId: string }>;
   followers: string[];
   followed: string[];
 }
@@ -24,15 +24,14 @@ export interface PostComment {
   content: string;
   _id: string;
   createdAt: string;
-  
 }
 export interface Post {
   _id: string;
   ownerId: string;
   content: string;
   images: any;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: string | Date;
+  updatedAt: string | Date;
   likes: [];
-  comments: PostComment[]
+  comments: PostComment[];
 }
