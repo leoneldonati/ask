@@ -3,23 +3,29 @@ import Layout from "src/layouts/Layout.astro";
 import ImageSelector from "@components/react/post-image-selector";
 import { authStore } from "@stores/auth";
 import Avatar from "@components/avatar.astro";
+import ApiFunctions from "@services/api";
+import { postsStore } from "@stores/posts";
+import ErrorCard from "@components/error-card.astro";
 
 if (!Astro.cookies.get("session")) return Astro.redirect("/login");
 
 const { userLogged } = authStore.get();
+
+let errors = null;
 if (Astro.request.method === "POST") {
   const form = (await Astro.request.formData()) as FormData;
   form.append("userId", userLogged?._id);
-  return fetch(`${Astro.url.origin}/api/add-post`, {
-    method: "POST",
-    body: form,
-  })
-    .then((res) => {
-      if (res.ok) return Astro.redirect("/");
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+
+  const { ok, data, error } = await ApiFunctions(Astro.url.origin).addPost(
+    form
+  );
+
+  if (ok) {
+    postsStore.set([data, ...postsStore.get()]);
+    return Astro.redirect("/");
+  }
+
+  errors = error;
 }
 
 const avatar = userLogged?.avatar[0]?.secureUrl;
@@ -61,6 +67,8 @@ const avatar = userLogged?.avatar[0]?.secureUrl;
 
       <button class="add-post__btn" type="submit" form="form"> Post </button>
     </form>
+
+    {errors !== null && <ErrorCard error={errors} />}
   </section>
 </Layout>
 

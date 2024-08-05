@@ -1,6 +1,7 @@
 import { postsModel } from "@db";
 import type { APIRoute } from "astro";
 import { rm } from "fs/promises";
+import { ObjectId } from "mongodb";
 import { resJson } from "src/helpers/response";
 import { uploadFile } from "src/libs/cld";
 import { optimizePostAsset } from "src/libs/sharp";
@@ -58,10 +59,10 @@ export const POST: APIRoute = async ({ request }) => {
       comments: [],
     };
 
-    await postsModel.insertOne(postSchema);
+    const savedPost = await postsModel.insertOne(postSchema);
 
-    return resJson({ message: "Posted!" });
+    return resJson({ message: "Posted!", savedPost: {...postSchema, _id: new ObjectId(savedPost?.insertedId)} });
   } catch (e) {
-    return resJson({ message: "Error on server." });
+    return resJson({ message: "Error on server." }, { status: 500});
   }
 };
