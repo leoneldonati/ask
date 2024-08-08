@@ -73,6 +73,7 @@ const hasCommented =
       }}
       action="like"
       condition={hasLiked}
+      origin={Astro.url.origin}
       client:visible
     />
     <ActionBtn
@@ -85,6 +86,7 @@ const hasCommented =
         userLogged,
       }}
       condition={hasCommented}
+      origin={Astro.url.origin}
       action="comment"
     />
   </div>

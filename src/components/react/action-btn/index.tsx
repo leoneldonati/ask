@@ -14,6 +14,7 @@ type Props = {
   };
   length: number;
   condition: boolean;
+  origin: string;
 };
 export default function ActionBtn(props: Props) {
   const { action, length: initialLength, payload, condition: propCondition} = props;
@@ -58,7 +59,7 @@ export default function ActionBtn(props: Props) {
   async function sendLike() {
     try {
       const res = await fetch(
-        `http://localhost:4321/api/post-actions?type=${action}&from=${payload?.from}&to=${payload?.to}`,
+        `${props.origin}/api/post-actions?type=${action}&from=${payload?.from}&to=${payload?.to}`,
         {
           method: "POST",
         }
