@@ -4,7 +4,7 @@ import { signToken } from "@libs/jwt";
 import { usersModel } from "@db";
 import { append, resJson } from "@helpers/response";
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, cookies }) => {
   try {
     const formData = await request.formData();
 

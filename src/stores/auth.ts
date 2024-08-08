@@ -16,4 +16,6 @@ authStore.listen((state) => {
   if (state.errors !== null) {
     setTimeout(() => authStore.set({ errors: null }), 3000);
   }
+
+  console.log(state)
 });

@@ -2,8 +2,6 @@
 import Layout from "@layout";
 import { authStore } from "@stores/auth";
 import PostCard from "@components/post-card.astro";
-import Header from "@components/header.astro";
-import BubblePlus from "@icons/bubble-plus.astro";
 import ApiFn from "@services/api";
 import { postsStore } from "@stores/posts";
 import { COOKIE } from "@const";
@@ -13,7 +11,7 @@ if (!Astro.cookies.get(COOKIE.name) || authStore.get().userLogged === null) {
     userLogged: null,
     errors: { message: "Session expired!" },
   });
-  postsStore.set([])
+  postsStore.set([]);
   return Astro.redirect("/login");
 }
 
@@ -30,8 +28,6 @@ console.log("fetched from store");
 
 <Layout page="Home" description="">
   <section class="home">
-    <Header />
-
     <div class="home__container">
       <div class="home__container--posts">
         {
@@ -41,58 +37,23 @@ console.log("fetched from store");
             <span class="home__container--alert">There is no news here!</span>
           )
         }
-
-        <a
-          href="/post/add"
-          class="home__btn--add-post"
-          title="Share how your feels today!"
-        >
-          <BubblePlus />
-        </a>
       </div>
     </div>
   </section>
 </Layout>
-
-<script>
-  const $themeBtn = document.querySelector("#theme-btn");
-  const $body = document.querySelector("body");
-  $themeBtn.addEventListener("click", () => {
-    const themeSaved = localStorage.getItem("theme");
-
-    if (!themeSaved) {
-      const theme = "dark";
-      $body.style.backgroundColor = "#111";
-      $body.style.color = "#fff";
-      return localStorage.setItem("theme", theme);
-    }
-
-    if (themeSaved === "light") {
-      const theme = "dark";
-      $body.style.backgroundColor = "#111";
-      $body.style.color = "#fff";
-
-      return localStorage.setItem("theme", theme);
-    }
-
-    if (themeSaved === "dark") {
-      const theme = "light";
-      $body.style.backgroundColor = "#fff";
-      $body.style.color = "#111";
-
-      return localStorage.setItem("theme", theme);
-    }
-  });
-</script>
 <style>
   .home {
     position: relative;
     min-height: 100dvh;
+
     display: flex;
-    flex-flow: column;
+    flex-flow: row;
+    justify-content: center;
   }
 
   .home__container {
+    position: relative;
+
     display: flex;
   }
   .home__container--posts {
@@ -100,7 +61,7 @@ console.log("fetched from store");
     flex: 1;
     max-width: calc(var(--max_w) - 200px);
     width: 100%;
-    height: calc(100dvh - 66px);
+    height: 100dvh;
     margin: 0 auto;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -114,24 +75,5 @@ console.log("fetched from store");
     .home__container--alert {
       font-size: xx-large;
     }
-  }
-
-  .home__btn--add-post {
-    position: fixed;
-    z-index: 5;
-    width: 100%;
-    height: 100%;
-    max-height: 80px;
-    max-width: 80px;
-    display: flex;
-    justify-content: center;
-    bottom: 10%;
-    right: 5%;
-    border: 3px solid var(--color_accent);
-    background-color: var(--color_accent_light);
-    border-radius: 100%;
-    box-shadow: inset 0 0 8px transparent;
-    transition: box-shadow 0.2s ease-out;
-    color: var(--color_secondary_text);
   }
 </style>

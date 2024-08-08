@@ -1,10 +1,18 @@
-import ipstack from "ipstack";
 export async function getLocationBy({ ip }: { ip: string }) {
-  return new Promise((res, rej) => {
-    ipstack(ip, import.meta.env.IP_STACK, (err, result) => {
-      if (!err) return res(result)
+  try {
+    const res = await fetch(`https://ip.guide/${ip}`)
 
-      return rej(err)
-    })
-  })
+    if (!res.ok) return {
+      city: '',
+      country_name: ''
+    }
+
+    return await res.json()
+  }
+  catch(e) {
+    return {
+      city: '',
+      country_name: ''
+    }
+  }
 }

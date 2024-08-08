@@ -1,5 +1,8 @@
 ---
 import { ViewTransitions } from "astro:transitions";
+import HeaderReact from "@components/react/header";
+import Header from "@components/header.astro";
+import { authStore } from "@stores/auth";
 interface Props {
   page?: string;
   description?: string;
@@ -21,9 +24,23 @@ const { page, description } = Astro.props;
     <title>Ask! - {page}</title>
   </head>
   <body>
-    <slot />
-  </body><script></script>
-  <style is:global>
+    <main class="main">
+      {
+        authStore.get()?.userLogged !== null && (
+          // <HeaderReact
+          //   username={authStore.get()?.userLogged?.name}
+          //   avatarSrc={authStore.get()?.userLogged?.avatar[0].secureUrl}
+          //   client:only="react"
+          // />
+
+          <Header />
+        )
+      }
+      <div class="main__container">
+        <slot />
+      </div>
+    </main>
+  </body><style is:global>
     /* FONTS */
     @font-face {
       font-family: "Titles";
@@ -84,7 +101,6 @@ const { page, description } = Astro.props;
     button,
     textarea {
       font: inherit;
-
     }
     button {
       background: none;
@@ -121,6 +137,21 @@ const { page, description } = Astro.props;
         scroll-behavior: auto !important;
         transition: none;
       }
+    }
+
+    .main {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      min-height: 100dvh;
+      margin: 0 auto;
+      display: flex;
+      flex-flow: row-reverse;
+      justify-content: center;
+      align-items: start;
+    }
+    .main__container {
+      flex: 1;
     }
   </style>
 </html>
