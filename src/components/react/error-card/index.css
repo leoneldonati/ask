@@ -1,0 +1,22 @@
+.error {
+  position: fixed;
+  z-index: 90;
+  bottom: 40px;
+  max-width: 400px;
+  width: 100%;
+  min-height: 80px;
+  border: 2px solid red;
+  box-shadow: 0 0 9px rgba(255, 0, 0, 0.7);
+  background-color: rgba(255, 0, 0, 0.4);
+  padding: var(--padding_boxes);
+  color: white;
+  pointer-events: none;
+
+  transition:
+    transform 0.2s ease-out,
+    opacity 0.4s ease-in-out;
+}
+.error__h2 {
+}
+.error__p {
+}
