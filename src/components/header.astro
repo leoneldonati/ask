@@ -1,10 +1,20 @@
 ---
 import IconSearch from "@icons/search.astro";
 import { authStore } from "@stores/auth";
+import { IconBubbleFilled, IconHome, IconLogout } from "@tabler/icons-react";
 
 const { userLogged } = authStore.get();
 const avatarSrc = userLogged?.avatar[0]?.secureUrl;
 const username = userLogged?.name;
+
+enum ROUTES {
+  HOME = "/",
+  SEARCH = "/search",
+}
+const path = Astro.url.pathname;
+
+const inSearchPage = path === ROUTES.SEARCH;
+const inHomePage = path === ROUTES.HOME;
 ---
 
 <header class="home__header">
@@ -12,56 +22,28 @@ const username = userLogged?.name;
 
   <ul class="home__header__ul">
     <li>
-      <a class="home__header__btn" href="/search">
-        <span class="pointer"></span>
+      <a
+        class="home__header__btn"
+        href="/search"
+        style=`background-color: ${inSearchPage && 'var(--color_accent_light)'}; color: ${inSearchPage && '#fff'}; border-color: ${inSearchPage && 'var(--color_accent)'};`
+      >
         <IconSearch />{" "}
         Search
       </a>
     </li>
     <li>
-      <a class="home__header__btn" href="/">
-        <span class="pointer"></span>
-
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-          <path
-            d="M19 8.71l-5.333 -4.148a2.666 2.666 0 0 0 -3.274 0l-5.334 4.148a2.665 2.665 0 0 0 -1.029 2.105v7.2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-7.2c0 -.823 -.38 -1.6 -1.03 -2.105"
-          ></path>
-          <path d="M16 15c-2.21 1.333 -5.792 1.333 -8 0"></path>
-        </svg>{" "}
+      <a
+        class="home__header__btn"
+        href="/"
+        style=`background-color: ${inHomePage && 'var(--color_accent_light)'}; color: ${inHomePage && '#fff'}; border-color: ${inHomePage && 'var(--color_accent)'};`
+      >
+        <IconHome />{" "}
         Home
       </a>
     </li>
     <li>
       <a class="home__header__btn" href="/logout" title="Close session?">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-          <path
-            d="M10 8v-2a2 2 0 0 1 2 -2h7a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-7a2 2 0 0 1 -2 -2v-2"
-          ></path>
-          <path d="M15 12h-12l3 -3"></path>
-          <path d="M6 15l-3 -3"></path>
-        </svg>{" "}
+        <IconLogout />{" "}
         Logout
       </a>
     </li>
@@ -71,29 +53,12 @@ const username = userLogged?.name;
         class="home__btn--add-post"
         title="Share how your feels today!"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-          <path
-            d="M12.4 19a4.2 4.2 0 0 1 -1.57 -.298l-3.83 2.298v-3.134a2.668 2.668 0 0 1 -1.795 -3.773a4.8 4.8 0 0 1 2.908 -8.933a5.335 5.335 0 0 1 9.194 1.078a5.333 5.333 0 0 1 4.45 6.89"
-          ></path>
-          <path d="M16 19h6"></path>
-          <path d="M19 16v6"></path>
-        </svg>
+        <IconBubbleFilled />
       </a>
     </li>
   </ul>
 
-  <a class="home__header__btn--session" href="/profile">
+  <a class="home__header__btn--session" href=`/users/${userLogged._id}` transition:persist>
     <img
       src={avatarSrc}
       alt={username}
@@ -124,36 +89,23 @@ const username = userLogged?.name;
     display: flex;
     flex-flow: column;
     justify-content: space-evenly;
-    align-items: center;
+    align-items: start;
 
     & > li {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .pointer {
-      width: 10px;
-      height: 10px;
-      border-radius: 100%;
+      width: 100%;
     }
   }
   .home__header__btn {
+    width: 100%;
     color: var(--color_secondary_text);
     display: flex;
+    justify-content: space-between;
     align-items: self-end;
     gap: 2px;
     box-shadow: 0 0 0 transparent;
+    border: 1px solid transparent;
     border-radius: var(--border_size);
-    padding: 2px;
-    transition: box-shadow 0.1s ease-in-out;
-    &:hover {
-      box-shadow: 0 4px 2px var(--color_secondary);
-    }
-    &:active {
-      box-shadow: 0 2px 2px var(--color_secondary);
-    }
+    padding: 10px;
   }
   .home__header__btn--session {
     display: flex;
