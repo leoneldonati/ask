@@ -1,11 +1,12 @@
 ---
 import Carrousell from "./react/carrousel";
 import PostImage from "./post-image.astro";
-import ActionBtn from "./react/action-btn";
+import LikeBtn from "./react/like-btn";
 import PostHeaderTop from "./post-header-top.astro";
 import ApiFunctions from "@services/api";
 import { authStore } from "@stores/auth";
 import type { Post } from "@types";
+import { IconAdjustments, IconBubble } from "@tabler/icons-react";
 
 interface Props {
   post: Post;
@@ -17,15 +18,17 @@ const { post } = Astro.props;
 const user = await ApiFunctions(Astro.url.origin).getUser(post.ownerId);
 
 const avatar = user?.avatar[0]?.secureUrl;
-const imagesPaths = post?.images?.map((path) => path.secureUrl);
+const imagesPaths = post?.images?.map((path) => path?.secureUrl);
 
 const hasMultipleImages = imagesPaths?.length > 1;
-const hasImages = post?.images.length !== 0;
+const hasImages = post?.images?.length !== 0;
 // VERIFICAR SI EL USUARIO LOGEADO YA INTERACTUO CON EL POST
 const hasLiked = post.likes?.find((id) => id === userLogged?._id) !== undefined;
 const hasCommented =
   post.comments?.find((comment) => comment?.owner?._id === userLogged?._id) !==
   undefined;
+
+const isThisUser = authStore.get().userLogged._id === user._id;
 ---
 
 <article class="post">
@@ -37,7 +40,10 @@ const hasCommented =
     content={post?.content}
   />
 
-  <div class="post__container--images">
+  <div
+    class="post__container--images"
+    style=`aspect-ratio: ${hasImages && 16 / 9};`
+  >
     {
       hasImages ? (
         hasMultipleImages ? (
@@ -62,33 +68,29 @@ const hasCommented =
   </a>
 
   <div class="post__container--actions-btn">
-    <ActionBtn
-      length={post?.likes?.length}
-      payload={{
-        from: userLogged?._id,
-        to: post?._id,
-        likes: post?.likes,
-        ownerName: user?.name,
-        userLogged,
-      }}
-      action="like"
-      condition={hasLiked}
-      origin={Astro.url.origin}
-      client:visible
-    />
-    <ActionBtn
-      length={post?.comments?.length}
-      payload={{
-        from: userLogged?._id,
-        to: post?._id,
-        comments: post?.comments,
-        ownerName: user?.name,
-        userLogged,
-      }}
-      condition={hasCommented}
-      origin={Astro.url.origin}
-      action="comment"
-    />
+    <div
+      style="display: flex; flex-flow: row; gap: 2em; align-items: center; flex: 1; justify-content: center;"
+    >
+      <LikeBtn
+        length={post?.likes?.length}
+        payload={{
+          from: userLogged?._id,
+          to: post?._id,
+        }}
+        liked={hasLiked}
+        origin={Astro.url.origin}
+        client:visible
+      />
+      <a href=""><IconBubble /></a>
+    </div>
+
+    {
+      isThisUser && (
+        <button class="post__edit__btn" title="Settings">
+          <IconAdjustments />
+        </button>
+      )
+    }
   </div>
 </article>
 
@@ -110,12 +112,11 @@ const hasCommented =
   .post__container--actions-btn {
     grid-area: buttons;
     width: 100%;
-    max-width: 30%;
     margin: 0 auto;
 
     width: 100%;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
   }
   .post__container--images {
@@ -142,5 +143,10 @@ const hasCommented =
     aspect-ratio: 4 / 4;
     object-fit: cover;
     object-position: center;
+  }
+  .post__edit__btn {
+    display: grid;
+    place-content: center;
+    cursor: pointer;
   }
 </style>
