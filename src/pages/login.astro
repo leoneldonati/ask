@@ -1,10 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { authStore } from "../stores/auth";
-import ErrorCard from "../components/error-card.astro";
+import ErrorCard from "../components/react/error-card";
 import BrandGoogle from "../icons/brand-google.astro";
 import BrandInstagram from "../icons/brand-instagram.astro";
 import { COOKIE, ONE_HOUR } from "@const";
+import SubmitBtn from "@components/react/submit-btn";
 
 if (Astro.request.method === "POST") {
   try {
@@ -88,9 +89,7 @@ const { errors } = authStore.get();
         </div>
       </div>
 
-      <button type="submit" class="login__button" title="Login into Ask!">
-        Login
-      </button>
+      <SubmitBtn child1="Login" child2="Checking" client:visible />
     </form>
 
     <p style="margin-top: 4px;">
@@ -102,10 +101,9 @@ const { errors } = authStore.get();
 
     <!-- error card -->
 
-    {errors !== null ? <ErrorCard error={errors} /> : null}
+    {errors !== null ? <ErrorCard error={errors} client:visible /> : null}
   </section>
 </Layout>
-
 <style>
   .login {
     min-height: 100dvh;
@@ -173,32 +171,5 @@ const { errors } = authStore.get();
         color: var(--color_accent);
       }
     }
-  }
-  .login__button {
-    font-size: 1.1em;
-    padding: 0.6em 1em;
-    background-color: var(--color_accent);
-    border: none;
-    border-radius: var(--border_size);
-    box-shadow: 0 6px 6px var(--color_accent_light);
-    cursor: pointer;
-    transition:
-      transform 0.2s cubic-bezier(0.075, 0.82, 0.165, 1),
-      box-shadow 0.3s ease;
-
-    &:hover {
-      transform: scale(1.03);
-      box-shadow: 0 8px 9px var(--color_accent_light);
-    }
-    &:active {
-      transform: scale(0.99);
-      box-shadow: 0 4px 6px var(--color_accent_light);
-    }
-  }
-  .disabled {
-    pointer-events: none;
-    transform: scale(0.9);
-    cursor: none;
-    opacity: 0.8;
   }
 </style>

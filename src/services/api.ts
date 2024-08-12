@@ -66,12 +66,21 @@ function ApiFunctions(origin: string) {
       };
     }
   }
+
+  async function checkNewPosts() {
+    const res = await fetch(`${origin}/api/check-new-posts`)
+
+    if (!res.ok) return false;
+
+    return await res.json()
+  }
   return {
     getPost,
     getPosts,
     getUser,
     getUserPosts,
     addPost,
+    checkNewPosts
   };
 }
 export default ApiFunctions;

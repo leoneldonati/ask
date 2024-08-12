@@ -1,6 +1,5 @@
 ---
 import { ViewTransitions } from "astro:transitions";
-import HeaderReact from "@components/react/header";
 import Header from "@components/header.astro";
 import { authStore } from "@stores/auth";
 interface Props {
@@ -25,17 +24,7 @@ const { page, description } = Astro.props;
   </head>
   <body>
     <main class="main">
-      {
-        authStore.get()?.userLogged !== null && (
-          // <HeaderReact
-          //   username={authStore.get()?.userLogged?.name}
-          //   avatarSrc={authStore.get()?.userLogged?.avatar[0].secureUrl}
-          //   client:only="react"
-          // />
-
-          <Header />
-        )
-      }
+      {authStore.get()?.userLogged !== null && <Header />}
       <div class="main__container">
         <slot />
       </div>
@@ -149,9 +138,15 @@ const { page, description } = Astro.props;
       flex-flow: row-reverse;
       justify-content: center;
       align-items: start;
+      overflow: hidden;
     }
     .main__container {
-      flex: 1;
+      max-width: calc(var(--max_w) - 200px);
+      width: 100%;
+      height: 100dvh;
+      margin: 0 auto;
+      border-left: 1px solid var(--color_secondary);
+      border-right: 1px solid var(--color_secondary);
     }
   </style>
 </html>

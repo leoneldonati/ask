@@ -2,7 +2,8 @@
 import { authStore } from "@stores/auth";
 import AvatarSelector from "@components/react/avatar-selector";
 import Layout from "@layout";
-import ErrorCard from "@components/error-card.astro";
+import ErrorCard from "@components/react/error-card";
+import SubmitBtn from "@components/react/submit-btn";
 
 if (Astro.request.method === "POST") {
   try {
@@ -112,10 +113,10 @@ const { errors } = authStore.get();
         <input type="date" name="date" id="date" class="sign__input" />
       </label>
 
-      <button type="submit" class="sign__button"> sign up </button>
+      <SubmitBtn child1="Signup" child2="Saving" client:visible />
     </form>
 
-    {errors && <ErrorCard error={errors} />}
+    {errors && <ErrorCard error={errors} client:visible/>}
   </section>
 </Layout>
 <style>

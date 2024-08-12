@@ -3,6 +3,7 @@ import Layout from "@layout";
 import { authStore } from "@stores/auth";
 import PostCard from "@components/post-card.astro";
 import ApiFn from "@services/api";
+import SeeMoreBtn from "@components/react/see-more-btn";
 import { postsStore } from "@stores/posts";
 import { COOKIE } from "@const";
 
@@ -15,58 +16,48 @@ if (!Astro.cookies.get(COOKIE.name) || authStore.get().userLogged === null) {
   return Astro.redirect("/login");
 }
 
-if (postsStore.get().length === 0) {
-  const posts = await ApiFn(Astro.url.origin).getPosts(20);
-  postsStore.set([...posts]);
-  console.log("fetched from server");
+// CARGAR NUEVOS POSTEOS CUANDO EL USUARIO PRESIONA SEE MORE.
+if (Astro.request.method === "POST") {
+  const posts = postsStore.get();
+  const newPosts = await ApiFn(Astro.url.origin).getPosts(20);
+
+
+  postsStore.set(posts.length > 100 ? [...newPosts] : [...posts, ...newPosts]);
 }
 
-const posts = postsStore.get();
+const posts = await ApiFn(Astro.url.origin).getPosts(20);
 
-console.log("fetched from store");
 ---
 
 <Layout page="Home" description="">
   <section class="home">
-    <div class="home__container">
-      <div class="home__container--posts">
-        {
-          posts?.length !== 0 ? (
-            posts.map((post) => <PostCard post={post} />)
-          ) : (
-            <span class="home__container--alert">There is no news here!</span>
-          )
-        }
-      </div>
+    <div class="home__container--posts">
+      {
+        posts?.length !== 0 ? (
+          posts.map((post) => <PostCard post={post} />)
+        ) : (
+          <span class="home__container--alert">There is no news here!</span>
+        )
+      }
     </div>
+
+    <!-- BOTÓN DINÁMICO PARA VER POSTEOS -->
+    <SeeMoreBtn origin={Astro.url.origin} client:visible />
   </section>
 </Layout>
 <style>
   .home {
     position: relative;
     min-height: 100dvh;
-
-    display: flex;
-    flex-flow: row;
-    justify-content: center;
   }
 
-  .home__container {
-    position: relative;
-
-    display: flex;
-  }
   .home__container--posts {
     position: relative;
     flex: 1;
-    max-width: calc(var(--max_w) - 200px);
-    width: 100%;
     height: 100dvh;
-    margin: 0 auto;
     overflow-y: scroll;
     overflow-x: hidden;
-    border-left: 1px solid var(--color_secondary);
-    border-right: 1px solid var(--color_secondary);
+
     text-align: center;
     &::-webkit-scrollbar {
       display: none;

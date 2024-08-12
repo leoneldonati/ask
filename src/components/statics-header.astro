@@ -1,0 +1,25 @@
+---
+
+
+const { posts, user } = Astro.props;
+---
+
+
+<script>
+  const $stadistcsHeader = document.querySelector('.profile__container--header') as HTMLElement;
+
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY
+    console.log(scrollY)
+    if (scrollY > 400) {
+      $stadistcsHeader.style.backgroundColor = 'rgba(0, 0, 0, .8)'
+    }
+    else {
+      $stadistcsHeader.style.backgroundColor = 'transparent'
+    }
+  })
+</script>
+
+<style>
+  
+</style>

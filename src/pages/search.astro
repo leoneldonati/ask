@@ -1,9 +1,10 @@
 ---
+import SearchInput from "@components/react/search-input";
 import Layout from "src/layouts/Layout.astro";
-if (!Astro.cookies.get('session')) return Astro.redirect("/login");
+if (!Astro.cookies.get('session')) return Astro.redirect("/");
 
 ---
 
 <Layout>
-  
+  <SearchInput origin={Astro.url.origin} client:visible />
 </Layout>

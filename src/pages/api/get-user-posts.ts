@@ -14,7 +14,7 @@ export const GET: APIRoute = async ({ request }) => {
     );
 
   try {
-    const result = await postsModel.find({ userId }).toArray()
+    const result = await postsModel.find({ ownerId: userId }).sort({ createdAt: -1 }).toArray()
     return resJson(result);
   } catch (e) {
     return resJson({ message: "Error on server" }, { status: 500 });
