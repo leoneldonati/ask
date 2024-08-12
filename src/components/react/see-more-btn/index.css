@@ -1,0 +1,15 @@
+.home__btn--more {
+  position: absolute;
+  top: 2%;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  width: fit-content;
+  margin: 0 auto;
+  padding: var(--padding_boxes);
+  border-radius: var(--border_size);
+  background-color: var(--color_accent);
+  color: #fff;
+  cursor: pointer;
+  transition: opacity .3s ease-in, transform .2s ease-in-out;
+}

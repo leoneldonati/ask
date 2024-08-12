@@ -1,63 +1,27 @@
 .images {
-  max-width: 100%;
-  width: 100%;
-  overflow: hidden;
   position: relative;
-}
-.images-wrapper {
-  aspect-ratio: 16/9;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  gap: 2px;
-  border: 1px solid var(--color_secondary);
+  width: 50px;
+  height: 50px;
+  position: relative;
+  border: 2px solid var(--color_accent);
+  background-color: var(--color_accent_light);
+  display: grid;
+  place-content: center;
   cursor: pointer;
-  transition: transform 0.2s ease;
-  transform: translateX(0);
-
-  & > img {
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-  }
-}
-.delete {
-  position: absolute;
-  right: 2%;
-  top: 2%;
-  z-index: 3;
-  cursor: pointer;
-  fill: var(--color_accent);
-  color: var(--color_accent);
-  transition: transform .2s ease;
-
+  border-radius: var(--border_size);
   &:hover {
-    transform: scale(1.05);
   }
 }
-#right,
-#left {
+.images__counter {
   position: absolute;
-  cursor: pointer;
-  top: 2%;
-  background: var(--color_secondary);
-  border: none;
-  display: flex;
-  padding: 10px;
+  top: -30%;
+  right: -10%;
+  width: 25px;
+  height: 25px;
   border-radius: 100%;
-  transition: transform 0.2s ease-out;
-
-  &:hover {
-    transform: scale(1.02);
-  }
-
-  &:active {
-    transform: scale(1);
-  }
-}
-#right {
-  right: 2%;
-}
-
-#left {
-  left: 2%;
+  display: grid;
+  place-content: center;
+  padding: 4px;
+  background-color: var(--color_accent);
+  color: #fff;
 }

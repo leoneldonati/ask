@@ -1,0 +1,44 @@
+.login__button {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  gap: 4px;
+  font-size: 1.1em;
+  padding: 0.6em 1em;
+  background-color: var(--color_accent);
+  border: none;
+  border-radius: var(--border_size);
+  box-shadow: 0 6px 6px var(--color_accent_light);
+  cursor: pointer;
+  transition:
+    transform 0.2s cubic-bezier(0.075, 0.82, 0.165, 1),
+    box-shadow 0.3s ease;
+
+  &:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 9px var(--color_accent_light);
+  }
+  &:active {
+    transform: scale(0.99);
+    box-shadow: 0 4px 6px var(--color_accent_light);
+  }
+}
+.loading {
+  display: none;
+  transition: transform 0.3s ease-out;
+  animation: spin 1.5s 0s infinite;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.disabled {
+  pointer-events: none;
+  transform: scale(0.9);
+  cursor: none;
+  opacity: 0.9;
+}
