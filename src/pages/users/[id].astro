@@ -9,6 +9,8 @@ import defaultAvatar from "@assets/default-avatar.svg";
 import PostCard from "@components/post-card.astro";
 import ApiFunctions from "@services/api";
 import { COOKIE } from "@const";
+import StaticsHeader from "@components/react/statics-header";
+import { authStore } from "@stores/auth";
 
 if (!Astro.cookies.get(COOKIE.name)) return Astro.redirect("/login");
 
@@ -22,6 +24,8 @@ const userBd = new Date(user.date).toLocaleDateString("es");
 const location = user?.location;
 
 const posts = await getUserPosts(Astro.params?.id);
+
+const isThisUser = authStore.get().userLogged._id === user._id
 ---
 
 <Layout page={`@${user?.username}`} description={user?.bio}>
@@ -31,72 +35,71 @@ const posts = await getUserPosts(Astro.params?.id);
     </a>
 
     <div class="profile__container">
-      <img
-        class="profile__img"
-        src={avatar}
-        alt={`${user?.name} avatar.`}
-        loading="lazy"
-        transition:name="avatar"
-        title={user?.name}
-      />
+      <div class="profile__container--user">
+        <img
+          class="profile__img"
+          src={avatar}
+          alt={`${user?.name} avatar.`}
+          loading="lazy"
+          transition:name="avatar"
+          title={user?.name}
+        />
 
-      <div>
-        <h1 class="profile__h1">
-          {user?.name}
-          <IconPoint />
-          <span class="profile__h1__span">@{user?.username}</span>
-        </h1>
+        <div>
+          <h1 class="profile__h1">
+            {user?.name}
+            <IconPoint />
+            <span class="profile__h1__span">@{user?.username}</span>
+          </h1>
 
-        <p class="profile_p">
-          {user.bio}
-        </p>
-        <ul class="profile__ul">
-          <li>
-            <IconCalendarClock /> Joined at: {createdAt}
-          </li>
-          <li>
-            <IconCake /> Birthday: {userBd}
-          </li>
-          <li>
-            <IconMapPin /> Location: {
-              `${location?.city}, ${location?.country_name}`
-            }
-          </li>
-        </ul>
+          <p class="profile_p">
+            {user.bio}
+          </p>
+          <ul class="profile__ul">
+            <li>
+              <IconCalendarClock /> Joined at: {createdAt}
+            </li>
+            <li>
+              <IconCake /> Birthday: {userBd}
+            </li>
+            <li>
+              <IconMapPin /> Location: {
+                `${location?.city}, ${location?.country_name}`
+              }
+            </li>
+          </ul>
+        </div>
+        {
+          isThisUser &&
+          <a class="profile__btn--edit" href={`/profile/${user?._id}`}>
+            Edit profile
+          </a>
+        }
       </div>
-      <a class="profile__btn--edit" href={`/profile/${user?._id}`}>
-        Edit profile
-      </a>
-    </div>
 
-    <div class="profile__container--posts">
-      <header class="profile__container--header">
-        <button>
-          Posts: <strong>{posts?.length}</strong>
-        </button>
-
-        <button>
-          Followers: <strong>{user?.followers.length}</strong>
-        </button>
-
-        <button>
-          Followed: <strong>{user?.followed.length}</strong>
-        </button>
-      </header>
-
-      {posts?.length !== 0 && posts.map((post) => <PostCard post={post} />)}
+      <div class="profile__container--posts">
+        
+        <StaticsHeader posts={posts} user={user} />
+        {posts?.length !== 0 && posts.map((post) => <PostCard post={post} />)}
+      </div>
     </div>
   </section>
 </Layout>
 
 <style>
   .profile {
-    min-height: 100dvh;
+    position: relative;
+    height: 100dvh;
     max-width: var(--max_w);
     margin: 0 auto;
     padding: 6px;
     display: flex;
     flex-flow: column;
+  }
+  .profile__container {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    scrollbar-width: none;
   }
   .profile__btn--back {
     position: fixed;
@@ -110,8 +113,9 @@ const posts = await getUserPosts(Astro.params?.id);
     cursor: pointer;
   }
   .profile__btn--edit {
-    position: sticky;
-    top: 0;
+    position: absolute;
+    bottom: 2%;
+    right: 0;
     display: flex;
     max-width: fit-content;
     border-radius: var(--border_size);
@@ -137,7 +141,8 @@ const posts = await getUserPosts(Astro.params?.id);
     max-width: 300px;
     transition: transform 0.2s ease;
   }
-  .profile__container {
+  .profile__container--user {
+    position: relative;
     display: flex;
     flex-flow: row;
     align-items: flex-start;
@@ -148,23 +153,8 @@ const posts = await getUserPosts(Astro.params?.id);
     display: flex;
     flex-flow: column;
   }
-  .profile__container--header {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    border-top: 1px solid var(--color_secondary);
-    border-bottom: 1px solid var(--color_secondary);
-    display: flex;
-    flex-flow: row;
-    justify-content: space-around;
-    align-items: center;
-    padding: var(--padding_boxes);
-    backdrop-filter: blur(1em);
 
-    & > button {
-      padding: var(--padding_boxes);
-    }
-  }
+  
   .profile__h1 {
     display: flex;
   }
@@ -175,3 +165,5 @@ const posts = await getUserPosts(Astro.params?.id);
     color: var(--color_secondary_text);
   }
 </style>
+
+
